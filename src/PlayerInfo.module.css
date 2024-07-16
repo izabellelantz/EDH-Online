@@ -1,0 +1,59 @@
+.life-display {
+    border-radius: 50px;
+    width: 4vw;
+    height: 4vh;
+    font-size: 3vh;
+    align-content: center;
+    margin: 5px;
+    padding: 2px;
+    color: black;
+    font-weight: bold;
+    position: absolute;
+}
+  
+.player-info {
+    display: flex;
+}
+
+.top-row {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 0;
+}
+  
+.bottom-row {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    bottom: 12px;
+}
+  
+.top-row .life-display {
+    margin-bottom: 165%;
+}
+  
+.bottom-row .life-display {
+    margin-top: 165%;
+}
+
+.deck {
+    background-color: rgb(35, 35, 35);
+    height: 50px;
+    width: 40px;
+    border-radius: 2px;
+    margin-left: 5px;
+    font-size: 2vh;
+    z-index: 1;
+    border: 1px solid rgba(255, 255, 255, 0.68);
+    box-shadow: 2px 3px rgba(0, 0, 0, 0.398);
+    color: white;
+}
+  
+.top-row .deck {
+    margin-top: 125%;
+}
+  
+.bottom-row .deck {
+    margin-bottom: 125%;
+}

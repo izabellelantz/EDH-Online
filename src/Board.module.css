@@ -1,0 +1,53 @@
+.game-board {
+    width: 92vw;
+    height: 85vh;
+    max-height: 1200px;
+    max-width: 1400px;
+    background-image: url("Assets/table.jpg");
+    background-position: center;
+    background-size: cover;
+    box-shadow: 2px 2px 4px 4px rgb(97, 78, 78);
+}
+  
+.grid {
+    display: grid;
+    height: 100%;
+    width: 100%;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); 
+}
+  
+.cell {
+    border: 2px solid rgba(64, 45, 34, 0.328);
+    position: relative;
+}
+  
+.top-playmat, .bottom-playmat {
+    height: 60%;
+    width: 94%;
+    border: 3px solid rgba(0, 0, 0, 0.4);
+    border-radius: 4px;
+    box-shadow: 2px 2px 3px 2px rgb(80, 62, 62);
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+  
+.top-playmat {
+    bottom: 4%;
+}
+  
+.bottom-playmat {
+  top: 4%;
+}
+  
+@media (max-width: 768px) {
+    .game-board {
+      width: 87vw;
+      height: 85vh;
+    }
+  
+    .playmat {
+      height: 50%;
+      width: 90%;
+    }
+}

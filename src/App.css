@@ -1,0 +1,18 @@
+#root {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+  font-family: "Jersey 10", sans-serif;
+}
+
+.title {
+  font-size: 4vh;
+  padding: 0;
+  margin: 0;
+  margin-right: 3px;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+

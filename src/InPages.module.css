@@ -1,0 +1,60 @@
+.signUpForm {
+    background-color: rgba(165, 163, 143, 0.4);
+    padding: 5vw;
+    border-radius: 8px;
+    text-align: left;
+}
+
+.formArea {
+    padding: 7px;
+}
+
+.nameLabel,
+.usernameLabel,
+.passwordLabel,
+.passwordRLabel {
+    font-size: 18px;
+    font-weight: bolder;
+}
+
+.nameLabel {
+    margin-right: 30px;
+}
+
+.passwordRLabel {
+    margin-right: 17px;
+}
+
+.usernameLabel,
+.passwordLabel {
+    margin-right: 70px;
+}
+
+.nameInput,
+.usernameInput,
+.passwordInput {
+    border: 0px white;
+    border-radius: 8px;
+}
+
+.nameInput:hover,
+.usernameInput:hover,
+.passwordInput:hover {
+    border: 0px white;
+    border-radius: 8px;
+}
+
+.formSubmit {
+    width: 25vw;
+    height: 7vh;
+
+    max-width: 100px;
+    max-height: 30px;
+    
+    text-align: center;
+    font-size: 15px;
+    font-weight: bolder;
+
+    margin-top: 50px;
+    margin-left: 100px;
+}
