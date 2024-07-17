@@ -1,0 +1,7 @@
+.mainCont {
+    width: 70vw;
+    height: 80vh;
+    background-color: rgba(255, 255, 255, 0.668);
+    border-radius: 8px;
+    margin: 5px auto;
+}

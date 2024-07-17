@@ -9,24 +9,19 @@ export interface PlayerInfoProps {
     position: string;
 }
 
-export interface CardDisp {
-    name: string;
-    image?: string;
-}
-
 export interface Card {
     name: string;
-    image?: string;
-    type: string;
-    manaCost: string;
-    colorIdentity: string;
-    abilities: string;
-    legal: boolean;
-}
-
-export interface Creature extends Card {
-    power: number;
-    toughness: number;
+    image_uris: {
+        small?: string;
+        normal?: string;
+    };
+    mana_cost: string;
+    type_line: string;
+    power?: string;
+    toughness?: string;
+    color_identity: string[];
+    keywords?: string[];
+    rarity: string;
 }
 
 export interface Deck {

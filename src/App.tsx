@@ -12,22 +12,28 @@ import { SignUpPage } from "./SignUp/SignUpPage";
 import { LogInPage } from "./LogIn/LogInPage";
 import { Play } from "./Play/Play";
 import { MainPage } from "./MainPage";
+import { ProvideAuth } from "./Auth/useAuth";
+import { AddDeck } from "./Home/DeckUpload";
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<HomePage/>}></Route>
+    <ProvideAuth>
+      <Router>
+        <Routes>
+          <Route path="/" element={<HomePage/>}></Route>
 
-        <Route path="/SignUp" element={<SignUpPage/>}></Route>
+          <Route path="/SignUp" element={<SignUpPage/>}></Route>
 
-        <Route path="/LogIn" element={<LogInPage/>}></Route>
+          <Route path="/LogIn" element={<LogInPage/>}></Route>
 
-        <Route path="/Home" element={<MainPage/>}></Route>
+          <Route path="/DeckChange" element={<AddDeck/>}></Route>
 
-        <Route path="/Play" element={<Play/>}></Route>
-      </Routes>
-    </Router>
+          <Route path="/Home" element={<MainPage/>}></Route>
+
+          <Route path="/Play" element={<Play/>}></Route>
+        </Routes>
+      </Router>
+    </ProvideAuth>
   )
 }
 
