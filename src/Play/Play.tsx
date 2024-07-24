@@ -3,7 +3,7 @@ import { Board } from "../Board/Board"
 import { roll } from "./RollDice";
 
 export function Play() {
-  const numPlayers = 2;
+  const numPlayers = 6;
   const rolls = [];
 
   const navigate = useNavigate();
