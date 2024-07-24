@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useAuth } from '../Auth/useAuth';
 import { useNavigate } from 'react-router-dom';
 
-interface DeckCard {
+export interface DeckCard {
     name: string;
     quantity: number;
     image_uris: {
@@ -20,36 +20,21 @@ interface DeckCard {
     rarity: string;
 };
 
-export function shuffleDeck() {
-    const { user } = useAuth();
-    const [shuffledDeck, setShuffledDeck] = useState<DeckCard[]>([]);
-
-    useEffect(() => {
-        const fetchDeck = async () => {
-            try {
-                const response = await axios.get<{ deck: DeckCard[] }>(`/deck/${user?.name}`);
-                setShuffledDeck(response.data.deck);
-            } catch (error) {
-                console.error('Error fetching deck:', error);
-            }
-        };
-
-        fetchDeck();
-    }, [user?.name]);
-
+export function shuffleDeck(deck: DeckCard[]): DeckCard[] {
+    const shuffledDeck = [...deck];
     for (let i = shuffledDeck.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [shuffledDeck[i], shuffledDeck[j]] = [shuffledDeck[j], shuffledDeck[i]];
     }
     return shuffledDeck;
-};
+}
 
+// Draw function
 export function drawCard(deck: DeckCard[]): [DeckCard | null, DeckCard[]] {
     if (deck.length === 0) return [null, deck];
-
     const [card, ...remainingDeck] = deck;
     return [card, remainingDeck];
-};
+}
 
 export function DeckPage() {
     let navigate = useNavigate();

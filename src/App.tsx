@@ -33,7 +33,7 @@ function App() {
 
           <Route path="/Deck" element={<DeckPage/>}></Route>
 
-          <Route path="/Play" element={<Play/>}></Route>
+          <Route path="/Play" element={<Play />}></Route>
         </Routes>
       </Router>
     </ProvideAuth>

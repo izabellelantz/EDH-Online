@@ -10,7 +10,32 @@
     font-weight: bold;
     position: absolute;
 }
-  
+
+.deck {
+    background-color: rgb(35, 35, 35);
+    height: 50px;
+    width: 40px;
+    border-radius: 2px;
+    margin-left: 5px;
+    font-size: 2vh;
+    z-index: 1;
+    border: 1px solid rgba(255, 255, 255, 0.68);
+    box-shadow: 2px 3px rgba(0, 0, 0, 0.398);
+    color: white;
+}
+
+.drawn-cards-container {
+    display: flex;
+    flex-direction: row; /* Arrange items in a row */
+    overflow-x: visible; /* Allow horizontal scrolling if needed */
+    gap: 5px; /* Optional: space between cards */
+}
+
+.drawn-card {
+    max-width: 100px; /* Adjust as needed */
+    height: auto; /* Maintain aspect ratio */
+}
+
 .player-info {
     display: flex;
 }
@@ -35,19 +60,6 @@
   
 .bottom-row .life-display {
     margin-top: 165%;
-}
-
-.deck {
-    background-color: rgb(35, 35, 35);
-    height: 50px;
-    width: 40px;
-    border-radius: 2px;
-    margin-left: 5px;
-    font-size: 2vh;
-    z-index: 1;
-    border: 1px solid rgba(255, 255, 255, 0.68);
-    box-shadow: 2px 3px rgba(0, 0, 0, 0.398);
-    color: white;
 }
   
 .top-row .deck {

@@ -65,7 +65,7 @@ export function MainPage() {
                         )}
                         <br />
                         <button style={{fontSize:"16px", padding:"5px"}} onClick={changeReq}>Update/Change Deck</button>
-                        <button onClick={viewDeck}>View Deck</button>
+                        <button style={{fontSize:"16px", padding:"5px"}} onClick={viewDeck}>View Deck</button>
                     </div>
 
                     <div>

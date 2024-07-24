@@ -13,8 +13,8 @@
 .usernameLabel,
 .passwordLabel,
 .passwordRLabel {
-    font-size: 18px;
-    font-weight: bolder;
+    font-size: 15px;
+    font-weight: bold;
 }
 
 .nameLabel {
@@ -22,12 +22,15 @@
 }
 
 .passwordRLabel {
-    margin-right: 17px;
+    margin-right: 13px;
 }
 
-.usernameLabel,
+.usernameLabel {
+    margin-right: 72px;
+}
+
 .passwordLabel {
-    margin-right: 70px;
+    margin-right: 75px;
 }
 
 .nameInput,

@@ -1,7 +1,7 @@
 .landing-logo {
-    height: 30vh;
+    height: 50vh;
     width: 80vw;
-    background-image: url("Assets/EDH Online Pink Yellow Star Logo.png");
+    background-image: url("Assets/EDH Online Card Logo Outline.png");
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
@@ -18,7 +18,7 @@
     width: 20vw;
     max-width: 200px;
     padding: 0.75em 1em;
-    font-size: 100%;
+    font-size: 80%;
 }
 
 .login-button:hover,
