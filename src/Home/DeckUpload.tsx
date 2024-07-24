@@ -13,6 +13,10 @@ export function AddDeck() {
     const navigate = useNavigate();
     const [deckInput, setDeckInput] = useState<string>("");
 
+    const backToMain = () => {
+        navigate("/Home");
+    };
+
     const parseDeckInput = (): { deck: CardInfo[], commander?: CardInfo } => {
         const entries = deckInput.split("\n").filter(entry => entry.trim() !== "");
         const deck: CardInfo[] = [];
@@ -63,12 +67,16 @@ export function AddDeck() {
 
     return (
         <>
-            <p>EDH is a popular format of Magic the Gathering, also known as Commander format, upload your deck here.</p>
-            <p>Enter your deck here in the format: "4 Forest", "3 Lightning Bolt", etc.</p>
+            <p>EDH is a popular format of Magic the Gathering, also known as Commander format, upload your deck here to begin playing.</p>
+            <p>Make sure your deck is in the format of "quantity name", for example:</p>
+            <p>"4 Forest</p>
+            <p>3 Lightning Bolt</p>
+            <p>1 Sol Ring" etc.</p>
             <p>Make sure your commander is in the last line!</p>
             <textarea value={deckInput} onChange={(e) => setDeckInput(e.target.value)} rows={10} cols={50} />
             <br />
             <button onClick={addToDeck}>Add Deck</button>
+            <button onClick={backToMain}>Back</button>
         </>
     );
 }

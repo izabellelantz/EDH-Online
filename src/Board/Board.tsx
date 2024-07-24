@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { BoardProps } from "../Common/types";
 import { PlayerInfo } from "../PlayerInfo/PlayerInfo";
 import classes from "../Board.module.css";
+import { shuffleDeck, drawCard } from '../Deck/Deck';
 
 export function Board({ players }: BoardProps) {
   const { numRows, numCols } = calculateGridSize(players);
@@ -42,6 +43,7 @@ export function Board({ players }: BoardProps) {
     </div>
   );
 }
+
 
 function calculateGridSize(players: number) {
   let numRows = 2;

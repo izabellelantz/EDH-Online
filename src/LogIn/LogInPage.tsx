@@ -19,16 +19,22 @@ export function LogInPage() {
         e.preventDefault();
         const username = usernameRef.current!.value;
         const password = passwordRef.current!.value;
-        const user = await axios.post<LoginResponse>("/login", {
-            username,
-            password,
-        });
-        if (user.data.jwt) {
-            setUser({ name: username, authToken: user.data.jwt });
+        try {
+            const user = await axios.post<LoginResponse>("/login", {
+                username,
+                password,
+            });
+            if (user.data.jwt) {
+                setUser({ name: username, authToken: user.data.jwt });
+                localStorage.setItem('jwt', user.data.jwt);
+                console.log(user.data.jwt);
+                navigate("/Home");
+            }
+        } catch (error) {
+            console.error("Login error:", error);
         }
-        console.log(user.data.jwt);
-        navigate("/Home");
     };
+    
     return (
         <>
             <h1 style={{ fontSize:"30px", fontWeight:"bolder"}}>Log In</h1>
@@ -41,7 +47,7 @@ export function LogInPage() {
 
                 <div className={classes["formArea"]}>
                     <label className={classes["passwordLabel"]}>Password:</label>
-                    <input name="password" ref={passwordRef} autoComplete="current-password" className={classes["passwordInput"]}/>
+                    <input name="password" type="password" ref={passwordRef} autoComplete="current-password" className={classes["passwordInput"]}/>
                 </div>
 
                 <button type="submit" className={classes["formSubmit"]}>Continue</button>

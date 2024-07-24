@@ -18,11 +18,12 @@ export function MainPage() {
         const fetchCommanderImageURI = async () => {
             try {
                 const response = await axios.get<CommanderImageResponse>(`/commander/${user?.name}`);
+                console.log('API Response:', response);
+                console.log(user?.name);
+                console.log(response.data.commanderImageURI);
 
-                if (response.data && response.data.commanderImageURI) {
+                if (response.data.commanderImageURI) {
                     setCommanderImageURI(response.data.commanderImageURI);
-                } else {
-                    console.error('Commander image URI not found in response');
                 }
             } catch (error) {
                 console.error('Error fetching commander image URI:', error);
@@ -30,11 +31,20 @@ export function MainPage() {
         };
 
         fetchCommanderImageURI();
-    }, []);
+    }, [user?.name]);
 
     const changeReq = async (e: FormEvent) => {
         e.preventDefault();
         navigate("/DeckChange");
+    }
+
+    const startPlay = async (e: FormEvent) => {
+        e.preventDefault();
+        navigate("/Play");
+    }
+
+    const viewDeck = () => {
+        navigate("/Deck")
     }
 
     return (        
@@ -45,27 +55,33 @@ export function MainPage() {
                 
                 <div className={classes["mainCont"]}>
                     <div>
-                        <p>Current Deck</p>
+                        <p style={{fontSize:"24px"}}>Current Deck</p>
                         {commanderImageURI && (
-                            <img src={commanderImageURI} alt="Commander" style={{ maxWidth: '200px' }} />
+                            <img 
+                                src={commanderImageURI} 
+                                alt="Commander" 
+                                style={{ maxWidth: '200px' }} 
+                            />
                         )}
-                        <button onClick={changeReq}>Update/Change Deck</button>
+                        <br />
+                        <button style={{fontSize:"16px", padding:"5px"}} onClick={changeReq}>Update/Change Deck</button>
+                        <button onClick={viewDeck}>View Deck</button>
                     </div>
 
                     <div>
-                        <p>Friends</p>
+                        <p style={{fontSize:"24px"}}>Friends</p>
                     </div>
 
                     <div>
-                        <button>Add Friends</button>
+                        <button style={{fontSize:"16px", padding:"5px"}}>Add Friends</button>
                     </div>
 
                     <div>
-                        <button>Start Game</button>
+                        <button style={{fontSize:"16px", padding:"5px"}} onClick={startPlay}>Start Game</button>
                     </div>
 
                     <div>
-                        <button>How To</button>
+                        <button style={{fontSize:"16px", padding:"5px"}}>How To</button>
                     </div>
                 </div>
             </div>

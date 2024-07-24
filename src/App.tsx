@@ -14,6 +14,7 @@ import { Play } from "./Play/Play";
 import { MainPage } from "./MainPage";
 import { ProvideAuth } from "./Auth/useAuth";
 import { AddDeck } from "./Home/DeckUpload";
+import { DeckPage } from "./Deck/Deck";
 
 function App() {
   return (
@@ -29,6 +30,8 @@ function App() {
           <Route path="/DeckChange" element={<AddDeck/>}></Route>
 
           <Route path="/Home" element={<MainPage/>}></Route>
+
+          <Route path="/Deck" element={<DeckPage/>}></Route>
 
           <Route path="/Play" element={<Play/>}></Route>
         </Routes>
