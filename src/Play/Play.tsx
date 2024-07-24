@@ -3,7 +3,7 @@ import { Board } from "../Board/Board"
 import { roll } from "./RollDice";
 
 export function Play() {
-  const numPlayers = 6;
+  const numPlayers = 2;
   const rolls = [];
 
   const navigate = useNavigate();
@@ -23,7 +23,7 @@ export function Play() {
 
   return (
     <>
-      <button onClick={backToMain}>Back</button>
+      <button onClick={backToMain} style={{ position:"absolute", top:"5px" }}>QUIT GAME</button>
       <h1 className="title">EDH Online!</h1>
       <Board players={numPlayers}/>
     </>

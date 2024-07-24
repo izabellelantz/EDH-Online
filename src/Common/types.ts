@@ -1,3 +1,5 @@
+import { DeckCard } from "../Deck/Deck";
+
 export interface BoardProps {
     players: number;
 }
@@ -7,6 +9,11 @@ export interface PlayerInfoProps {
     playerColor: string;
     deckCount: number;
     position: string;
+}
+
+export interface BoardCard {
+    card: DeckCard;
+    tapped: boolean;
 }
 
 export interface Card {
