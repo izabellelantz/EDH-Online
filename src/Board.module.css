@@ -1,7 +1,7 @@
 .game-board {
     width: 92vw;
-    height: 85vh;
-    max-height: 1200px;
+    height: 90vh;
+    max-height: 1800px;
     max-width: 1400px;
     background-image: url("Assets/table.jpg");
     background-position: center;
@@ -22,7 +22,7 @@
 }
   
 .top-playmat, .bottom-playmat {
-    height: 60%;
+    height: 55%;
     width: 94%;
     border: 3px solid rgba(0, 0, 0, 0.4);
     border-radius: 4px;

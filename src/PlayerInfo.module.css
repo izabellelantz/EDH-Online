@@ -11,12 +11,13 @@
 }
 
 .deck {
-    position: relative;
+    position: fixed;
     background-color: rgb(35, 35, 35);
     height: 50px;
     width: 40px;
     border-radius: 2px;
     margin-left: 5px;
+    margin-bottom: 10px;
     font-size: 2vh;
     border: 1px solid rgba(255, 255, 255, 0.68);
     box-shadow: 2px 3px rgba(0, 0, 0, 0.398);
@@ -25,40 +26,60 @@
 }
 
 .drawn-cards-container {
-    padding: 50px;
-    position: relative;
+    padding: 10px;
+    bottom: 80px;
+    position: fixed;
     display: flex;
     flex-direction: row;
-    overflow-x: visible; /* Allow horizontal scrolling if needed */
+    overflow-x: visible;
     gap: 5px;
     z-index: 1;
+    margin-left: 90px;
 }
 
 .drawn-card {
-    max-width: 100px; 
+    max-width: 90px; 
     height: auto; 
 }
 
 .board-card {
     height: auto;
-    max-width: 50px;
+    width: 50px;
     margin: 5px;
+    display: block;
     transition: transform 0.2s ease;
 }
 
 .board-container {
-    position: absolute;
-    bottom: 190px;
+    position: relative;
+    bottom: 210px;
     left: 50px;
     z-index: 1;
     display: flex;
+    flex-wrap: wrap;
     flex-direction: row;
     gap: 5px;
 }
 
 .tapped {
-    /* Rotate the card to indicate it's tapped */
     transform: rotate(90deg);
+}
+
+.focused {
+    transform: scale(2.5); 
+    z-index: 10;
+}
+
+.life-display {
+    font-size: 80%;
+}
+
+.change-life {
+    margin: 0;
+    background-color: rgba(255, 255, 255, 0);
+    border: 0;
+    padding: 5px;
+    cursor: pointer;
 }
 
 .player-info {
@@ -96,4 +117,88 @@
   
 .bottom-row .deck {
     bottom: 20%;
+}
+
+.card-wrapper {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .toggle-buttons-button {
+    margin-top: 5px;
+    cursor: pointer;
+    position: absolute;
+    bottom: 10;
+    background: none;
+    left: 50%;
+    border: none;
+    font-size: 1.2em;
+    transform: translateX(-50%);
+    z-index: 5; 
+  }
+  
+  .card-buttons {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    pointer-events: auto;
+  }
+  
+  .card-buttons button {
+    background-color: rgba(255, 255, 255, 0.8);
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+    font-size: 12px;
+  }
+  
+  .card-buttons button:hover {
+    background-color: rgba(255, 255, 255, 1);
+  }
+  
+.graveyard-container {
+    position: absolute;
+    left: 0s;
+    top: 0;
+    width: 200px;
+    height: 20vh;
+    overflow-y: auto;
+    border-right: 1px solid #ccc; 
+    padding: 10px;
+}
+
+.exile-container {
+    position: absolute;
+    left: 0;
+    top: 200px; 
+    width: 200px; 
+    height: 200px; 
+    overflow-y: auto;
+    border-right: 1px solid #ccc;
+    padding: 10px;
+}
+
+.graveyard,
+.exile {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px; 
+}
+
+.graveyard-card,
+.exile-card {
+    width: 50px;
+}
+
+.side-areas {
+    display: flex;
+    justify-content: space-between;
+    width: 90%;
+    padding-left: 30vw;
 }

@@ -27,6 +27,7 @@ export function Board({ players }: BoardProps) {
         playerColor={assignedColors[i]}
         deckCount={99}
         position={pos}
+        currentHandSize={0}
         />
         <div className={classes[`${pos}-playmat`]} style={{ backgroundColor: assignedColors[i] }}>
         </div>

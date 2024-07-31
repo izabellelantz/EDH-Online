@@ -9,11 +9,13 @@ export interface PlayerInfoProps {
     playerColor: string;
     deckCount: number;
     position: string;
+    currentHandSize: number;
 }
 
 export interface BoardCard {
     card: DeckCard;
     tapped: boolean;
+    focused: boolean;
 }
 
 export interface Card {
