@@ -10,6 +10,12 @@
     font-weight: bold;
 }
 
+.next-step {
+    position: fixed;
+    bottom: 50px;
+    left: 150px;
+}
+
 .deck {
     position: fixed;
     background-color: rgb(35, 35, 35);
@@ -50,16 +56,45 @@
     transition: transform 0.2s ease;
 }
 
+.commander-card {
+    height: auto;
+    width: 90px;
+    margin: 5px;
+    display: block;
+    position: fixed;
+    right: 80px;
+    bottom: 0;
+    z-index: 2;
+}
+
 .board-container {
-    position: relative;
-    bottom: 210px;
-    left: 50px;
+    position: fixed;
+    bottom: 260px;
+    left: 150px;
     z-index: 1;
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
     gap: 5px;
 }
+
+.board-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.non-land-cards {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+}
+
+.land-cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
 
 .tapped {
     transform: rotate(90deg);
@@ -125,10 +160,8 @@
   }
   
   .toggle-buttons-button {
-    margin-top: 5px;
     cursor: pointer;
     position: absolute;
-    bottom: 10;
     background: none;
     left: 50%;
     border: none;
@@ -185,10 +218,9 @@
 .graveyard,
 .exile {
     display: flex;
-    flex-wrap: wrap;
     flex-direction: row;
     align-items: center;
-    gap: 10px; 
+    gap: 5px; 
 }
 
 .graveyard-card,
@@ -198,7 +230,53 @@
 
 .side-areas {
     display: flex;
+    position: absolute;
     justify-content: space-between;
-    width: 90%;
+    width: 100%;
     padding-left: 30vw;
+    bottom: 0;
+}
+
+.power-toughness-display {
+    color: rgb(0, 0, 0);
+    font-size: 12px;
+}
+
+.hand-card-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 5px;
+    z-index: 1;
+  }
+
+  .hand-card-button {
+    font-size: 8px;
+    margin-top: 2px;
+    padding: 2px 5px;
+    background-color: #dc3545;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 3px;
+  }
+
+  .hand-card-button:hover {
+    background-color: #c82333; 
+  }
+
+  .graveyard-card:hover,
+.exile-card:hover {
+    transform: scale(2); 
+    transition: transform 0.2s ease-in-out;
+}
+
+.combat-phase {
+    position: fixed;
+    left: 650px;
+    bottom: 300px;
+    z-index: 1;
+    background-color: wheat;
+    border-radius: 10px;
+    padding: 10px;
 }

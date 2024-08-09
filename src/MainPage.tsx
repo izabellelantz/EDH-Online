@@ -5,7 +5,7 @@ import { FormEvent, useEffect, useState } from "react";
 
 import axios from "axios";
 
-interface CommanderImageResponse {
+export interface CommanderImageResponse {
     commanderImageURI: string;
 }
 
