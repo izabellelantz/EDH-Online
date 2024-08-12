@@ -42,8 +42,8 @@ export function PlayerInfo({ lifeCount, playerColor, deckCount, position, curren
     const [step, setStep] = useState(steps[0]);
 
     const [attackers, setAttackers] = useState<BoardCard[]>([]);
+    const [blockers, setBlockers] = useState<BoardCard[]>([]);
     const [totalDamage, setTotalDamage] = useState<number>(0);
-    const [combatMode, setCombatMode] = useState(false);
 
     useEffect(() => {
         const fetchDeck = async () => {
@@ -78,6 +78,10 @@ export function PlayerInfo({ lifeCount, playerColor, deckCount, position, curren
         fetchCommanderImageURI();
     }, [user?.name]);
 
+    const [combatMode, setCombatMode] = useState(false);
+    const [attackSubPhase, setAttackSubPhase] = useState(false);
+    const [blockSubPhase, setBlockSubPhase] = useState(false);
+    const [showAttackers, setShowAttackers] = useState(false);
 
     const handleNextStep = () => {
         setCurrentStep(prevStep => {
@@ -86,6 +90,7 @@ export function PlayerInfo({ lifeCount, playerColor, deckCount, position, curren
 
             if (step === "Combat") {
                 setCombatMode(true);
+                setAttackSubPhase(true);
                 combatPhase();
             } else {
                 setCombatMode(false);
@@ -96,13 +101,15 @@ export function PlayerInfo({ lifeCount, playerColor, deckCount, position, curren
     };
 
     const combatPhase = () => {
-        setAttackers([]);
         setTotalDamage(0);
-    };
+        setAttackers([]);
+        setBlockers([]);
+        setShowAttackers(false); // Attackers are hidden initially
+    };    
 
     const handleAttackClick = (card: BoardCard) => {
-        if (!combatMode) return;
-
+        if (!combatMode || !attackSubPhase) return;
+    
         setAttackers(prevAttackers => {
             const isAttacking = prevAttackers.some(attacker => attacker.card === card.card);
             if (isAttacking) {
@@ -113,20 +120,67 @@ export function PlayerInfo({ lifeCount, playerColor, deckCount, position, curren
         });
     };
 
-    const handleConfirmAttack = () => {
+    const handleConfirmAttackers = () => {
         if (combatMode) {
             const totalDamage = attackers.reduce((sum, attacker) => 
                 sum + calculateTotalPower(attacker.card, counters[attacker.card.name] || []), 0
             );
             setTotalDamage(totalDamage);
-            moveToBlockers(attackers);
         }
     };
 
-    const moveToBlockers = (attackers: BoardCard[]) => {
+    const handleAttackPhase = () => {
+        if (combatMode && attackSubPhase) {
+            setAttackSubPhase(false);
+            setShowAttackers(true);
+            setBlockSubPhase(true);
+        }
+    }
 
+    const [selectedAttacker, setSelectedAttacker] = useState<BoardCard | null>(null);
+
+    //const handleBlockClick = (blocker: BoardCard) => {
+    //    if (!combatMode || !blockSubPhase || !selectedAttacker) return;
+    
+    //    setBlockers(prevBlockers => {
+    //        const isBlocking = prevBlockers.some(b => b.blocker.card === blocker.card && b.attacker.card === selectedAttacker.card);
+            
+    //        if (isBlocking) {
+    //            // If blocker is already blocking the selected attacker, remove it
+    //            return prevBlockers.filter(b => b.blocker.card !== blocker.card || b.attacker.card !== selectedAttacker.card);
+    //        } else {
+                // Otherwise, add the blocker to the selected attacker
+    //            return [...prevBlockers, { attacker: selectedAttacker, blocker }];
+    //       }
+    //    });
+    //};
+    
+
+    //const handleBlockClick = (attacker: BoardCard, blocker: BoardCard) => {
+    //    if (!combatMode || !blockSubPhase) return;
+
+    //    setBlockers(prevBlockers => {
+    //        const isBlocking = prevBlockers.some(b => b.card === blocker.card);
+    //        if (isBlocking) {
+    //            return prevBlockers.filter(b => b.card !== blocker.card);
+    //        } else {
+    //            return [...prevBlockers, blocker];
+    //        }
+    //    });
+    //};
+
+    const handleConfirmBlocks = () => {
+        if (combatMode && blockSubPhase) {
+            setBlockSubPhase(false); // End the block sub-phase
+            finalizeCombat(); // Move to the combat resolution
+        }
     };
 
+    const finalizeCombat = () => {
+        // Resolve combat, calculate damage, and apply any effects
+        setShowAttackers(false); // Hide attackers after combat is resolved
+        setStep("NextPhase"); // Move to the next phase, whatever that may be
+    };
 
     const handleDrawCard = () => {
         if (!isActive) return; // Prevent interaction if not active
@@ -162,15 +216,6 @@ export function PlayerInfo({ lifeCount, playerColor, deckCount, position, curren
         
         setDrawnCards(drawnCards.filter(c => c !== card)); // Remove card from drawn cards
         setHandSize(handSize - 1);
-    
-        axios.post('/playCard', { card })
-            .then(response => {
-                // Handle successful card play
-                console.log('Card played successfully:', response.data);
-            })
-            .catch(error => {
-                console.error('Error playing card:', error);
-            });
     };
 
     const handleMulligan = (cards: DeckCard[]) => {
@@ -432,26 +477,26 @@ export function PlayerInfo({ lifeCount, playerColor, deckCount, position, curren
         {combatMode && (
             <div className={classes["combat-phase"]}>
                 <h3>Select Attackers</h3>
-                {boardCards
-                    .filter(bc => bc.card.type_line.toLowerCase().includes("creature"))
-                    .map((bc, index) => (
-                        <div key={index} className={classes["combat-card"]}>
-                            <img
-                                src={bc.card.image_uris.small}
-                                alt={bc.card.name}
-                                className={classes["combat-card-img"]}
-                                onClick={() => handleAttackClick(bc)}
-                                style={{ cursor: 'pointer', border: attackers.includes(bc) ? '2px solid green' : 'none' }}
-                            />
-                            <span>{calculateTotalPower(bc.card, counters[bc.card.name] || [])}</span>
-                        </div>
-                    ))}
-                <div>
-                    <h4>Total Damage: {totalDamage}</h4>
-                    <button onClick={handleConfirmAttack}>Confirm Selection</button>
-                    <button onClick={() => setCombatMode(false)}>Cancel</button>
-                    <button onClick={() => setCombatMode(false)}>Attack!</button>
-                </div>
+                        {boardCards
+                            .filter(bc => bc.card.type_line.toLowerCase().includes("creature"))
+                            .map((bc, index) => (
+                                <div key={index} className={classes["combat-card"]}>
+                                    <img
+                                        src={bc.card.image_uris.small}
+                                        alt={bc.card.name}
+                                        className={classes["combat-card-img"]}
+                                        onClick={() => handleAttackClick(bc)}
+                                        style={{ cursor: 'pointer', border: attackers.includes(bc) ? '2px solid green' : 'none' }}
+                                    />
+                                    <span>{calculateTotalPower(bc.card, counters[bc.card.name] || [])}</span>
+                                </div>
+                            ))}
+                        <div>
+                            <h4>Total Damage: {totalDamage}</h4>
+                            <button onClick={handleConfirmAttackers}>Confirm Selection</button>
+                            <button onClick={() => setCombatMode(false)}>Cancel</button>
+                            <button onClick={() => handleAttackPhase}>Attack!</button>
+                    </div>
             </div>
         )}
             

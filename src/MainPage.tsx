@@ -2,17 +2,33 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "./Auth/useAuth";
 import classes from "./MainPage.module.css";
 import { FormEvent, useEffect, useState } from "react";
-
 import axios from "axios";
+import { socket } from "./Socket/Socket";
+import { FriendsList } from "./Friends/Friends";
 
 export interface CommanderImageResponse {
     commanderImageURI: string;
+}
+
+interface SocketResponse {
+    status: string;
+    msg: string;
 }
 
 export function MainPage() {
     const { user } = useAuth();
     let navigate = useNavigate();
     const [commanderImageURI, setCommanderImageURI] = useState<string | null>(null);
+
+    const [ room, setRoom ] = useState('Game');
+    
+    const ConnectRoom = () => {
+        socket.emit("joinRoom", room, (response: SocketResponse) => {
+          console.log(response.status);
+          alert(response.msg);
+        });
+      }
+      
 
     useEffect(() => {
         const fetchCommanderImageURI = async () => {
@@ -40,6 +56,7 @@ export function MainPage() {
 
     const startPlay = async (e: FormEvent) => {
         e.preventDefault();
+        ConnectRoom();
         navigate("/Play");
     }
 
@@ -69,7 +86,7 @@ export function MainPage() {
                     </div>
 
                     <div>
-                        <p style={{fontSize:"24px"}}>Friends</p>
+                        <FriendsList/>
                     </div>
 
                     <div>
