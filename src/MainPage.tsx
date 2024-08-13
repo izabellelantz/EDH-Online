@@ -4,7 +4,7 @@ import classes from "./MainPage.module.css";
 import { FormEvent, useEffect, useState } from "react";
 import axios from "axios";
 import { socket } from "./Socket/Socket";
-import { FriendsList } from "./Friends/Friends";
+import { AddFriend, FriendRequests, FriendsList } from "./Friends/Friends";
 
 export interface CommanderImageResponse {
     commanderImageURI: string;
@@ -87,6 +87,8 @@ export function MainPage() {
 
                     <div>
                         <FriendsList/>
+                        <AddFriend/>
+                        <FriendRequests/>
                     </div>
 
                     <div>
