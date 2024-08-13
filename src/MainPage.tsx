@@ -4,7 +4,7 @@ import classes from "./MainPage.module.css";
 import { FormEvent, useEffect, useState } from "react";
 import axios from "axios";
 import { socket } from "./Socket/Socket";
-import { AddFriend, FriendRequests, FriendsList } from "./Friends/Friends";
+import { AddFriend, FriendRequests, FriendsList, PendingRequests } from "./Friends/Friends";
 
 export interface CommanderImageResponse {
     commanderImageURI: string;
@@ -71,8 +71,8 @@ export function MainPage() {
                 <h2>Welcome, {user?.name}</h2>
                 
                 <div className={classes["mainCont"]}>
-                    <div>
-                        <p style={{fontSize:"24px"}}>Current Deck</p>
+                    <div className={classes["commanderCont"]}>
+                        <p style={{fontSize:"18px"}}>Current Deck</p>
                         {commanderImageURI && (
                             <img 
                                 src={commanderImageURI} 
@@ -81,26 +81,26 @@ export function MainPage() {
                             />
                         )}
                         <br />
-                        <button style={{fontSize:"16px", padding:"5px"}} onClick={changeReq}>Update/Change Deck</button>
-                        <button style={{fontSize:"16px", padding:"5px"}} onClick={viewDeck}>View Deck</button>
+                        <button className={classes["deckButtons"]} onClick={changeReq}>Update/Change Deck</button>
+                        <button className={classes["deckButtons"]} onClick={viewDeck}>View Deck</button>
                     </div>
 
-                    <div>
-                        <FriendsList/>
+                    <div className={classes["sectionCont"]}>
                         <AddFriend/>
+                        <PendingRequests/>
                         <FriendRequests/>
                     </div>
 
-                    <div>
-                        <button style={{fontSize:"16px", padding:"5px"}}>Add Friends</button>
+                    <div className={classes["friendCont"]}>
+                        <FriendsList/>
                     </div>
 
                     <div>
-                        <button style={{fontSize:"16px", padding:"5px"}} onClick={startPlay}>Start Game</button>
-                    </div>
+                        <button className={classes["xtraButtons"]}>Add Friends</button>
 
-                    <div>
-                        <button style={{fontSize:"16px", padding:"5px"}}>How To</button>
+                        <button className={classes["xtraButtons"]} onClick={startPlay}>Start Game</button>
+                
+                        <button className={classes["xtraButtons"]}>How To</button>
                     </div>
                 </div>
             </div>

@@ -1,7 +1,42 @@
 .mainCont {
-    width: 70vw;
-    height: 80vh;
+    width: 95%;
+    height: auto;
     background-color: rgba(255, 255, 255, 0.668);
     border-radius: 8px;
+    margin: 5px auto;
+    justify-self: center;
+    align-self: center;
+    padding: 20px;
+}
+
+.deckButtons,
+.xtraButtons {
+    font-size: 12px;
+    padding: 5px;
+    border-radius: 10px;
+    box-shadow: 3px 2px 3px 2px rgba(0, 0, 0, 0.451);
+    margin: 8px;
+}
+
+.commanderCont {
+    width: 50%;
+    border-radius: 10px;
+    box-shadow: 3px 4px 6px 4px rgba(0, 0, 0, 0.451);
+    padding: 20px;
+}
+
+.sectionCont,
+.friendCont {
+    border-radius: 10px;
+    box-shadow: 3px 4px 6px 4px rgba(0, 0, 0, 0.451);
+    padding: 20px;
+}
+
+.sectionCont {
+    width: 40%;
+}
+
+.friendCont {
+    width: 90%;
     margin: 5px auto;
 }

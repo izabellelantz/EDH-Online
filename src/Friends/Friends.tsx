@@ -1,5 +1,6 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { useAuth } from "../Auth/useAuth";
+import classes from "../Friends.module.css";
 import axios from "axios";
 
 export function AddFriend() {
@@ -33,8 +34,8 @@ export function AddFriend() {
 
     return (
         <form onSubmit={searchForFriend}>
-            <input name="friendSearch" ref={searchedUserRef} placeholder="Search for Friend" />
-            <button type="submit">Search</button>
+            <input name="friendSearch" className={classes["searchBar"]} ref={searchedUserRef} placeholder="Search for Friend" />
+            <button className={classes["reqButton"]} type="submit">Send Request</button>
         </form>
     );
 }
@@ -94,10 +95,51 @@ export function FriendRequests() {
     );
 }
 
+export function PendingRequests() {
+    const { user } = useAuth();
+    const [ pendingRequests, setPendingRequests ] = useState<string[]>([]);
+
+    useEffect(() => {
+        const fetchPending = async () => {
+            try {
+                const response = await axios.get<{ pendingRequests: string[] }>('friends/pending', {
+                    params: {
+                        username: user?.name,
+                    },
+                });
+                setPendingRequests(response.data.pendingRequests);
+            } catch (error) {
+                console.error("Error fetching pending requests: ", error);
+            }
+        };
+
+        if (user?.name) {
+            fetchPending();
+        }
+    }, [user?.name]);
+
+    return (
+        <>
+            <h2>Pending Requests</h2>
+            {pendingRequests.length === 0 ? (
+                <p>No pending requests!</p>
+            ) : (
+                <ul>
+                    {pendingRequests.map((pendingRequest, index) => (
+                        <li key={index}>
+                            <p>{pendingRequest}</p>
+                        </li>
+                    ))}
+                </ul>
+            )};
+        </>
+    );
+}
+
 
 export function FriendsList() {
     const { user } = useAuth();
-    const [friends, setFriends] = useState<string[]>([]);
+    const [ friends, setFriends ] = useState<string[]>([]);
 
     useEffect(() => {
         const fetchFriends = async () => {
@@ -124,10 +166,10 @@ export function FriendsList() {
             {friends.length === 0 ? (
                 <p>No friends yet! Add some now to begin playing</p>
             ) : (
-                <ul>
+                <ul className={classes["friendsList"]}>
                     {friends.map((friend, index) => (
                         <li key={index}>
-                            <h2>{friend}</h2>
+                            <button className={classes["friendInfo"]}>{friend}</button>
                         </li>
                     ))}
                 </ul>
