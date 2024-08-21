@@ -2,47 +2,78 @@ import { useState, useEffect } from 'react';
 import { BoardProps } from "../Common/types";
 import { PlayerInfo } from "../PlayerInfo/PlayerInfo";
 import classes from "../Board.module.css";
+import { useAuth } from '../Auth/useAuth';
 
-export function Board({ players }: BoardProps) {
-  const { numRows, numCols } = calculateGridSize(players);
+export function Board({ players, roomCode }: BoardProps) {
+  const { user } = useAuth();
 
-  // blue, pink, red, green, yellow, black, purple, white
-  const playmatColors = ["rgba(0, 0, 222, 0.6)", "rgba(240, 125, 179, 0.471)", "rgba(255, 0, 0, 0.53)", "rgba(11, 177, 11, 0.458)", "rgba(255, 255, 0, 0.30)", "rgba(0, 0, 0, 0.45)", "rgba(96, 3, 96, 0.511)", "rgba(255, 255, 255, 0.55)"];
+  const { numRows, numCols } = calculateGridSize(players.length);
+  
+  const positions = players.map((player) => {
+    return player === user?.name ? "bottom" : "top";
+  });
+  
+  // Blue, Pink, Red, Green, Yellow, Black, Purple, White
+  const playmatColors = [
+    "rgba(0, 0, 222, 0.6)",
+    "rgba(240, 125, 179, 0.471)",
+    "rgba(255, 0, 0, 0.53)",
+    "rgba(11, 177, 11, 0.458)",
+    "rgba(255, 255, 0, 0.30)",
+    "rgba(0, 0, 0, 0.45)",
+    "rgba(96, 3, 96, 0.511)",
+    "rgba(255, 255, 255, 0.55)"
+  ];
+
+  console.log("Players:", players);
+  console.log(user?.name);
+
   const [assignedColors, setAssignedColors] = useState<string[]>([]);
-  
+
   useEffect(() => {
-    const assigned = shuffleColors(players, playmatColors, numRows, numCols);
-    setAssignedColors(assigned);
-  }, [players, numRows, numCols]);
+    if (players.length > 0) {
+      const assigned = shuffleColors(playmatColors, numRows, numCols);
+      console.log("Assigned Colors:", assigned);
+      setAssignedColors(assigned);
+    }
+  }, [players, numRows, numCols]); // Ensure this dependency is correct
   
-  const cells = [];
-  
-  for (let i = 0; i < numRows * numCols; i++) {
-    const pos = i + 1 <= players / 2 ? "top" : "bottom";
-  
-    cells.push(
-      <div key={i} className={classes["cell"]}>
-        <PlayerInfo
+  const cells = players.map((player, i) => (
+    <div key={i} className={classes["cell"]}>
+      <PlayerInfo
         lifeCount={40}
         playerColor={assignedColors[i]}
         deckCount={99}
-        position={pos}
+        position={positions[i]}
         currentHandSize={0}
-        />
-        <div className={classes[`${pos}-playmat`]} style={{ backgroundColor: assignedColors[i] }}>
-        </div>
-      </div>
-    );
-  }
-  
+        roomCode={roomCode}
+        isActive={player === user?.name}
+      />
+  <div className={positions[i] === 'top' ? classes['top-playmat'] : classes['bottom-playmat']} style={{ backgroundColor: assignedColors[i] }}>
+  </div>
+    </div>
+  ));
+
+
   return (
     <div className={classes["game-board"]}>
       <div className={classes["grid"]} style={{ gridTemplateRows: `repeat(${numRows}, 1fr)`, gridTemplateColumns: `repeat(${numCols}, 1fr)` }}>
-        {cells}
+        <div className={classes["cell"]}>
+        <PlayerInfo
+        lifeCount={40}
+        playerColor={assignedColors[1]}
+        deckCount={99}
+        position={"bottom"}
+        currentHandSize={0}
+        roomCode={roomCode}
+        isActive={true}
+      />
+        </div>
       </div>
     </div>
   );
 }
+
 
 
 function calculateGridSize(players: number) {
@@ -66,16 +97,22 @@ function calculateGridSize(players: number) {
       break;
   }
 
+  console.log("Calculated Grid Size:", { numRows, numCols });
+  
   return { numRows, numCols };
 }
 
-function shuffleColors(players: number, playmatColors: string[], numRows: number, numCols: number) {
-  const shuffledColors = playmatColors.sort(() => Math.random() - 0.5);
 
+function shuffleColors(playmatColors: string[], numRows: number, numCols: number) {
+  const shuffledColors = [...playmatColors].sort(() => Math.random() - 0.5);
   const assigned = [];
+  
   for (let i = 0; i < numRows * numCols; i++) {
-    assigned.push(shuffledColors[i % players]);
+    assigned.push(shuffledColors[i % shuffledColors.length] || 'transparent');
   }
-
+  
+  console.log("Shuffled Colors:", shuffledColors);
+  console.log("Assigned Colors:", assigned);
+  
   return assigned;
-};
+}

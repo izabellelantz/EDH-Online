@@ -5,6 +5,7 @@ import { useAuth } from "../Auth/useAuth";
 import { useNavigate } from "react-router-dom";
 
 interface LoginResponse {
+    preferredName: string;
     jwt: string;
 }
 
@@ -25,7 +26,7 @@ export function LogInPage() {
                 password,
             });
             if (user.data.jwt) {
-                setUser({ name: username, authToken: user.data.jwt });
+                setUser({ preferredName: user.data.preferredName, name: username, authToken: user.data.jwt });
                 localStorage.setItem('jwt', user.data.jwt);
                 console.log(user.data.jwt);
                 navigate("/Home");
@@ -51,6 +52,8 @@ export function LogInPage() {
                 </div>
 
                 <button type="submit" className={classes["formSubmit"]}>Continue</button>
+                <br></br>
+                <button className={classes["forgotPw"]}>Forgot Password?</button>
             </form>
         </>
     );

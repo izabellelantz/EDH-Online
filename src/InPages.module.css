@@ -12,9 +12,14 @@
 .nameLabel,
 .usernameLabel,
 .passwordLabel,
-.passwordRLabel {
+.passwordRLabel,
+.emailLabel {
     font-size: 15px;
     font-weight: bold;
+}
+
+.emailLabel {
+    margin-right: 105px;
 }
 
 .nameLabel {
@@ -35,7 +40,8 @@
 
 .nameInput,
 .usernameInput,
-.passwordInput {
+.passwordInput,
+.emailInput {
     border: 0px white;
     border-radius: 8px;
     padding: 5px;
@@ -44,7 +50,8 @@
 
 .nameInput:hover,
 .usernameInput:hover,
-.passwordInput:hover {
+.passwordInput:hover,
+.emailInput:hover {
     border: 0px white;
     border-radius: 8px;
 }

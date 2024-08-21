@@ -1,7 +1,10 @@
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, useContext, useEffect, useRef, useState } from "react";
 import { useAuth } from "../Auth/useAuth";
 import classes from "../Friends.module.css";
 import axios from "axios";
+import { useFriends } from "./FriendsContext";
+import { useNavigate } from "react-router-dom";
+import { socket } from "../Socket/Socket";
 
 export function AddFriend() {
     const { user } = useAuth();
@@ -42,6 +45,7 @@ export function AddFriend() {
 
 export function FriendRequests() {
     const { user } = useAuth();
+    const { friends, fetchFriends, setFriends } = useFriends();
     const [friendRequests, setFriendRequests] = useState<string[]>([]);
     
     useEffect(() => {
@@ -70,15 +74,32 @@ export function FriendRequests() {
             if (response.data.message) {
                 console.log("Friend request accepted:", requester);
                 setFriendRequests(friendRequests.filter((req) => req !== requester));
+                fetchFriends();
             }
         } catch (error) {
             console.error("Error accepting friend request:", error);
         }
     };
 
+    const declineFriendRequest = async (requester: string) => {
+        try {
+            const response = await axios.post('/friends/decline', {
+                currUser: user?.name,
+                friendUser: requester,
+            });
+
+            if (response.data.message) {
+                console.log("Friend request declined:", requester);
+                setFriendRequests(friendRequests.filter((req) => req !== requester));
+            }
+        } catch (error) {
+            console.error("Error declining friend request:", error);
+        }
+    };
+
     return (
         <>
-            <h2>Friend Requests</h2>
+            <p style={{fontSize:"18px", fontWeight: "bold"}}>Friend Requests</p>
             {friendRequests.length === 0 ? (
                 <p>No new friend requests</p>
             ) : (
@@ -86,7 +107,8 @@ export function FriendRequests() {
                     {friendRequests.map((requester, index) => (
                         <li key={index}>
                             <h3>{requester}</h3>
-                            <button onClick={() => acceptFriendRequest(requester)}>Accept</button>
+                            <button className={classes["friend-buttons"]} onClick={() => acceptFriendRequest(requester)}>Accept</button>
+                            <button className={classes["friend-buttons"]} onClick={() => declineFriendRequest(requester)}>Decline</button>
                         </li>
                     ))}
                 </ul>
@@ -118,9 +140,26 @@ export function PendingRequests() {
         }
     }, [user?.name]);
 
+    const unsendRequest = async (friendName: string) => {
+        try {
+            const response = await axios.post("/friends/unsendRequest", {
+                username: user?.name,
+                friendName,
+            });
+
+            if (response.data.message) {
+                console.log("Friend request unsent:", friendName);
+                setPendingRequests(pendingRequests.filter((req) => req !== friendName));
+            }
+
+        } catch (e) {
+            console.log("Error unsending request: ", e);
+        }
+    };
+
     return (
         <>
-            <h2>Pending Requests</h2>
+            <p style={{fontSize:"18px", fontWeight: "bold"}}>Pending Requests</p>
             {pendingRequests.length === 0 ? (
                 <p>No pending requests!</p>
             ) : (
@@ -128,49 +167,212 @@ export function PendingRequests() {
                     {pendingRequests.map((pendingRequest, index) => (
                         <li key={index}>
                             <p>{pendingRequest}</p>
+                            <button className={classes["friend-buttons"]} onClick={() => unsendRequest(pendingRequest)}>Unsend</button>
                         </li>
                     ))}
                 </ul>
-            )};
+            )}
         </>
     );
 }
 
-
 export function FriendsList() {
     const { user } = useAuth();
-    const [ friends, setFriends ] = useState<string[]>([]);
+    const { friends, fetchFriends, setFriends } = useFriends();
+    const [pendingInvites, setPendingInvites] = useState<string[]>([]);
+    const [receivedInvites, setReceivedInvites] = useState<string[]>([]);
+    const [acceptedInvites, setAcceptedInvites] = useState<string[]>([]);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchFriends = async () => {
-            try {
-                const response = await axios.get<{ friends: string[] }>('/friends/list', {
-                    params: {
-                        username: user?.name,
-                    },
-                });
-                setFriends(response.data.friends);
-            } catch (error) {
-                console.error("Error fetching friends: ", error);
-            }
-        };
-
         if (user?.name) {
             fetchFriends();
         }
     }, [user?.name]);
 
+    const UnaddFriend = async ( friendUser: string ) => {        
+        try {
+            const response = await axios.post('/friends/unadd', {
+                currUser: user?.name,
+                friendUser,
+            });
+    
+            if (response.data.message) {
+                console.log("Friend unadded:", friendUser);
+                setFriends(friends.filter((req) => req !== friendUser));
+
+                fetchFriends();
+            }
+        } catch (error) {
+            console.error("Error unadding friend:", error);
+        }
+    };
+
+    const BlockFriend = async ( friendUser: string ) => {
+        try {
+            const response = await axios.post("/friends/block", {
+                currUser: user?.name,
+                friendUser,
+            });
+
+            if (response.data.message) {
+                console.log("Friend blocked:", friendUser);
+                setFriends(friends.filter((req) => req !== friendUser));
+
+                fetchFriends();
+            }
+        } catch (error) {
+            console.error("Error blocking friend:", error);
+        }
+    };
+
+    const InviteToGame = async (friendUser: string) => {
+        try {    
+            const response = await axios.post("/friends/inviteToGame", {
+                username: user?.name,
+                friendUser,
+            });
+    
+            if (response.data.message) {
+                console.log("Friend Invited: ", friendUser);
+                setPendingInvites((prev: string[]) => [...prev, friendUser]); // Add to pendingInvites
+            }
+        } catch (error) {
+            console.error("Error inviting friend:", error);
+        }
+    };
+
+    const acceptGameInvite = async (friendUser: string) => {
+        try {
+            const response = await axios.post('/friends/acceptGameInvite', {
+                currUser: user?.name,
+                friendUser,
+            });
+
+            const generatedRoomCode = `${user?.name}-${friendUser}`;
+            console.log("Room Code:", generatedRoomCode);
+
+
+            if (response.data.message) {
+                console.log("Game invite accepted from:", friendUser);
+                setReceivedInvites(receivedInvites.filter((invite) => invite !== friendUser));
+
+                socket.emit('joinRoom', generatedRoomCode, user?.name, (response: { msg: string }) => {
+                    console.log(response.msg);
+                    // Redirect to waiting room
+                    navigate(`/WaitingRoom/${generatedRoomCode}`);
+                });
+            }
+        } catch (error) {
+            console.error("Error accepting game invite:", error);
+        }
+    };
+
+    const declineGameInvite = async (friendUser: string) => {
+        try {
+            const response = await axios.post('/friends/declineGameInvite', {
+                currUser: user?.name,
+                friendUser,
+            });
+
+            if (response.data.message) {
+                console.log("Game invite declined from:", friendUser);
+                setReceivedInvites(receivedInvites.filter((invite) => invite !== friendUser));
+            }
+        } catch (error) {
+            console.error("Error declining game invite:", error);
+        }
+    };
+
+    const joiningFriend = async (friendName: string) => {
+        const response = await axios.post('/friends/joinedFriend', {
+            username: user?.name,
+            friendName,
+        });
+
+        if (response.data.message) {
+            console.log("Friend joined");
+            setAcceptedInvites(receivedInvites.filter((invite) => invite !== friendName));
+        }
+
+        navigate(`/WaitingRoom/${friendName}-${user?.name}`);
+    };
+
+    useEffect(() => {
+        const fetchInvites = async () => {
+            try {
+                const response = await axios.get<{ receivedInvites: string[] }>('/friends/gameInvites', {
+                    params: {
+                        username: user?.name,
+                    },
+                });
+                setReceivedInvites(response.data.receivedInvites);
+            } catch (error) {
+                console.error("Error fetching pending requests: ", error);
+            }
+        };
+
+        if (user?.name) {
+            fetchInvites();
+        }
+    }, [user?.name]);
+
+    useEffect(() => {
+        const fetchAccepted = async () => {
+            try {
+                const response = await axios.get<{ acceptedInvites: string[] }>('/friends/friendAcceptedInvite', {
+                    params: {
+                        username: user?.name,
+                    },
+                });
+
+                setAcceptedInvites(response.data.acceptedInvites);
+
+            } catch (error) {
+                console.error("Error fetching accepted invites: ", error);
+            }
+        };
+
+        if (user?.name && acceptedInvites.length >= 0) {
+            fetchAccepted();
+        }
+    }, [user?.name]);
+
     return (
         <>
-            <h2>Friends</h2>
+            <p style={{fontSize:"18px", fontWeight: "bold"}}>Friends</p>
             {friends.length === 0 ? (
                 <p>No friends yet! Add some now to begin playing</p>
             ) : (
                 <ul className={classes["friendsList"]}>
                     {friends.map((friend, index) => (
-                        <li key={index}>
-                            <button className={classes["friendInfo"]}>{friend}</button>
-                        </li>
+                        <span style={{ boxShadow: "none"}} key={index}>
+                            <p className={classes["friendInfo"]}>{friend}</p>
+                            <button className={classes["friend-buttons"]} onClick={() => UnaddFriend(friend)}>Unadd</button>
+                            <button className={classes["friend-buttons"]} onClick={() => BlockFriend(friend)}>Block</button>
+                            <button
+                                className={classes["friend-buttons"]}
+                                onClick={() => InviteToGame(friend)}
+                                disabled={pendingInvites.includes(friend)} // Disable if invite is pending
+                            >
+                                {pendingInvites.includes(friend) ? "Pending..." : "Invite"}
+                            </button>
+                            {receivedInvites.includes(friend) && (
+                                <div className={classes["inviteActions"]}>
+                                    <p>You have a game invite from {friend}:</p>
+                                    <button className={classes["friend-buttons"]} onClick={() => acceptGameInvite(friend)}>Accept</button>
+                                    <button className={classes["friend-buttons"]} onClick={() => declineGameInvite(friend)}>Decline</button>
+                                </div>
+                            )}
+
+                            {acceptedInvites.includes(friend) && (
+                                <div className={classes["gameReady"]}>
+                                    <p>{friend} accepted your invite!</p>
+                                    <button className={classes["friend-buttons"]} onClick={() => joiningFriend(friend)}>Join</button>
+                                </div>
+                            )}
+                        </span>
                     ))}
                 </ul>
             )}

@@ -14,6 +14,7 @@ export function SignUpPage() {
     const [preferredName, setPreferredName] = useState("");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [email, setEmail] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [passwordsMatch, setPasswordsMatch] = useState(false);
 
@@ -23,6 +24,8 @@ export function SignUpPage() {
         e.preventDefault();
         try {
             const response = await axios.post<RegistrationResponse>("/register", {
+                preferredName,
+                email,
                 username,
                 password,
             });
@@ -30,10 +33,10 @@ export function SignUpPage() {
                 console.log(`created user ${response.data.userCreated}`);
                 
                 if (response.data.jwt) {
-                    setUser({ name: username, authToken: response.data.jwt });
+                    setUser({ preferredName: preferredName, name: username, authToken: response.data.jwt });
                 }
 
-                navigate("/Home");
+                navigate("/");
             } else {
                 console.log("User creation failed or no response data.");
             }
@@ -57,6 +60,16 @@ export function SignUpPage() {
                         className={classes["nameInput"]}
                         name="preferred-name"
                         onChange={(e) => setPreferredName(e.target.value)}
+                    />
+                </div>
+
+                <div className={classes["formArea"]}>
+                    <label className={classes["emailLabel"]}>Email:</label>
+                    <input
+                        className={classes["emailInput"]}
+                        name="email"
+                        onChange={(e) => setEmail(e.target.value)}
+                        autoComplete="email"
                     />
                 </div>
 

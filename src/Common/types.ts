@@ -1,7 +1,13 @@
 import { DeckCard } from "../Deck/Deck";
 
+export interface ThemeContextType {
+    theme: 'light' | 'dark';
+    toggleTheme: () => void;
+}
+
 export interface BoardProps {
-    players: number;
+    players: string[];
+    roomCode?: string;
 }
 
 export interface PlayerInfoProps {
@@ -10,6 +16,8 @@ export interface PlayerInfoProps {
     deckCount: number;
     position: string;
     currentHandSize: number;
+    roomCode?: string;
+    isActive: boolean;
 }
 
 export interface BoardCard {

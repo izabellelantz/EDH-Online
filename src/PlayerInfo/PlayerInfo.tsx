@@ -5,20 +5,16 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth } from "../Auth/useAuth";
 import { CommanderImageResponse } from "../MainPage";
+import { socket } from "../Socket/Socket";
 
 interface Counters {
     [cardName: string]: string[];
 }
 
 
-export function PlayerInfo({ lifeCount, playerColor, deckCount, position, currentHandSize }: PlayerInfoProps) {
+export function PlayerInfo({ lifeCount, playerColor, deckCount, position, currentHandSize, roomCode, isActive }: PlayerInfoProps) {
     const currentMaxHandSize = 7;
     const [commanderImageURI, setCommanderImageURI] = useState<string | null>(null);
-    
-
-    const isTopRow = position === "top";
-    const isActive = position == "bottom";
-    // const [isActive, setIsActive] = useState(false);
 
     const { user } = useAuth();
 
@@ -33,17 +29,23 @@ export function PlayerInfo({ lifeCount, playerColor, deckCount, position, curren
     const [drawnCards, setDrawnCards] = useState<DeckCard[]>([]);
     const [numCards, setNumCards] = useState(deckCount);
     const [boardCards, setBoardCards] = useState<BoardCard[]>([]);
+
+    const [opponentLives, setOpponentLives] = useState(lifeCount);
+    const [opponentBoardCards, setOpponentBoardCards] = useState<BoardCard[]>([]);
+    const [opponentGyCards, setOpponentGyCards] = useState<BoardCard[]>([]);
+    const [opponentExileCards, setOpponentExileCards] = useState<BoardCard[]>([]);
     
     const [handSize, setHandSize] = useState(currentHandSize);
-    const [maxHandSize, setMaxHandSize] = useState(currentMaxHandSize);
 
-    const steps = ["Main", "Combat", "Main 2.0", "End"];
+    const steps = ["Upkeep", "Main", "Combat", "Main 2.0", "End"];
     const [currentStep, setCurrentStep] = useState(0);
     const [step, setStep] = useState(steps[0]);
 
     const [attackers, setAttackers] = useState<BoardCard[]>([]);
     const [blockers, setBlockers] = useState<BoardCard[]>([]);
     const [totalDamage, setTotalDamage] = useState<number>(0);
+
+    console.log(isActive);
 
     useEffect(() => {
         const fetchDeck = async () => {
@@ -62,7 +64,7 @@ export function PlayerInfo({ lifeCount, playerColor, deckCount, position, curren
     useEffect(() => {
         const fetchCommanderImageURI = async () => {
             try {
-                const response = await axios.get<CommanderImageResponse>(`/commander/${user?.name}`);
+                const response = await axios.get<CommanderImageResponse>(`/commanderImg/${user?.name}`);
                 console.log('API Response:', response);
                 console.log(user?.name);
                 console.log(response.data.commanderImageURI);
@@ -107,81 +109,6 @@ export function PlayerInfo({ lifeCount, playerColor, deckCount, position, curren
         setShowAttackers(false); // Attackers are hidden initially
     };    
 
-    const handleAttackClick = (card: BoardCard) => {
-        if (!combatMode || !attackSubPhase) return;
-    
-        setAttackers(prevAttackers => {
-            const isAttacking = prevAttackers.some(attacker => attacker.card === card.card);
-            if (isAttacking) {
-                return prevAttackers.filter(attacker => attacker.card !== card.card);
-            } else {
-                return [...prevAttackers, card];
-            }
-        });
-    };
-
-    const handleConfirmAttackers = () => {
-        if (combatMode) {
-            const totalDamage = attackers.reduce((sum, attacker) => 
-                sum + calculateTotalPower(attacker.card, counters[attacker.card.name] || []), 0
-            );
-            setTotalDamage(totalDamage);
-        }
-    };
-
-    const handleAttackPhase = () => {
-        if (combatMode && attackSubPhase) {
-            setAttackSubPhase(false);
-            setShowAttackers(true);
-            setBlockSubPhase(true);
-        }
-    }
-
-    const [selectedAttacker, setSelectedAttacker] = useState<BoardCard | null>(null);
-
-    //const handleBlockClick = (blocker: BoardCard) => {
-    //    if (!combatMode || !blockSubPhase || !selectedAttacker) return;
-    
-    //    setBlockers(prevBlockers => {
-    //        const isBlocking = prevBlockers.some(b => b.blocker.card === blocker.card && b.attacker.card === selectedAttacker.card);
-            
-    //        if (isBlocking) {
-    //            // If blocker is already blocking the selected attacker, remove it
-    //            return prevBlockers.filter(b => b.blocker.card !== blocker.card || b.attacker.card !== selectedAttacker.card);
-    //        } else {
-                // Otherwise, add the blocker to the selected attacker
-    //            return [...prevBlockers, { attacker: selectedAttacker, blocker }];
-    //       }
-    //    });
-    //};
-    
-
-    //const handleBlockClick = (attacker: BoardCard, blocker: BoardCard) => {
-    //    if (!combatMode || !blockSubPhase) return;
-
-    //    setBlockers(prevBlockers => {
-    //        const isBlocking = prevBlockers.some(b => b.card === blocker.card);
-    //        if (isBlocking) {
-    //            return prevBlockers.filter(b => b.card !== blocker.card);
-    //        } else {
-    //            return [...prevBlockers, blocker];
-    //        }
-    //    });
-    //};
-
-    const handleConfirmBlocks = () => {
-        if (combatMode && blockSubPhase) {
-            setBlockSubPhase(false); // End the block sub-phase
-            finalizeCombat(); // Move to the combat resolution
-        }
-    };
-
-    const finalizeCombat = () => {
-        // Resolve combat, calculate damage, and apply any effects
-        setShowAttackers(false); // Hide attackers after combat is resolved
-        setStep("NextPhase"); // Move to the next phase, whatever that may be
-    };
-
     const handleDrawCard = () => {
         if (!isActive) return; // Prevent interaction if not active
     
@@ -190,7 +117,7 @@ export function PlayerInfo({ lifeCount, playerColor, deckCount, position, curren
         console.log('Drawn card:', card);
         console.log('Remaining deck:', remainingDeck);
     
-        if (card && handSize < maxHandSize) {
+        if (card) {
             setDrawnCards([...drawnCards, card]); // Add drawn card to hand
             setDeck(remainingDeck);
             setNumCards(numCards - 1); // Update deck count
@@ -198,30 +125,95 @@ export function PlayerInfo({ lifeCount, playerColor, deckCount, position, curren
         }
     };
 
-    const handleCardClick = (card: DeckCard) => {
-        if (!isActive) return; // Prevent interaction if not active
-    
+    const handleCardClick = (card: DeckCard, roomCode: string) => {
+        if (!isActive || !roomCode) return; // Prevent interaction if not active or roomCode is missing
+        console.log(roomCode);
+
+
+        socket.emit('requestPlayCard', {
+            card,
+            player: user?.name,
+            roomCode
+        });
+        
+        // Handle instants and sorceries
         if (card.type_line.toLowerCase().includes("instant") || card.type_line.toLowerCase().includes("sorcery")) {
-            // Add the instant card to the board in a focused state and send it to graveyard
             setBoardCards([...boardCards, { card, tapped: false, focused: true }]);
             
+            // Emit the event to play the card for other players
+            socket.emit('playCard', {
+                card,
+                action: 'play',
+                moveTo: 'board',
+                player: user?.name, 
+                roomCode
+            });
+    
             setTimeout(() => {
                 setGraveyardCards((prev) => [...prev, card]);
                 setBoardCards((prev) => prev.filter((bc) => bc.card !== card));
+    
+                // Emit the event to move the card to the graveyard for other players
+                socket.emit('moveCard', {
+                    card,
+                    action: 'move',
+                    moveTo: 'graveyard',
+                    player: user?.name,
+                    roomCode
+                });
+    
             }, 2500);
         } else {
             // Handle other card types normally
             setBoardCards([...boardCards, { card, tapped: false, focused: false }]);
+    
+            // Emit the event to play the card for other players
+            socket.emit('playCard', {
+                card,
+                action: 'play',
+                moveTo: 'board',
+                player: user?.name,
+                roomCode
+            });
         }
-        
+    
         setDrawnCards(drawnCards.filter(c => c !== card)); // Remove card from drawn cards
         setHandSize(handSize - 1);
     };
+    
 
-    const handleMulligan = (cards: DeckCard[]) => {
-        setDrawnCards([]);
+    useEffect(() => {
 
-    };
+        // Listen for card actions from other players
+        socket.on('playCard', (data) => {
+            const { card, moveTo, player } = data;
+            console.log("Player:", player, "User:", user?.name);
+        
+            if (player !== user?.name && moveTo === 'board') {
+                console.log("Adding card to opponent's board:", card.name);
+                setOpponentBoardCards(prev => [...prev, { card, tapped: false, focused: false }]);
+            }
+            console.log("My board cards:", boardCards);
+            console.log("Opponent's board cards:", opponentBoardCards);
+
+        });
+        
+    
+        socket.on('moveCard', (data) => {
+            const { card, moveTo, player } = data;
+    
+            if (player !== user?.name && moveTo === 'graveyard') {
+                setOpponentGyCards(prev => [...prev, { card, tapped: false, focused: false}]);
+                setOpponentBoardCards(prev => prev.filter((bc) => bc.card !== card));
+            }
+        });
+    
+        return () => {
+            socket.off('pendingPlayCard');
+            socket.off('playCard');
+            socket.off('denyPlayCard');
+        };
+    }, [user?.name]);    
 
     const handleDiscardCard = (card: DeckCard) => {
         // Remove the card from the hand
@@ -267,9 +259,16 @@ export function PlayerInfo({ lifeCount, playerColor, deckCount, position, curren
         setLives(lives - 1);
     };
 
-    const focusCard = (card: DeckCard | null) => {
-        if (!isActive) return;
-    
+    const handleOppLifeUp = () => {
+        setOpponentLives(opponentLives + 1);
+    };
+
+    const handleOppLifeDown = () => {
+        setOpponentLives(opponentLives - 1);
+    };
+
+
+    const focusCard = (card: DeckCard | null) => {    
         setBoardCards(boardCards.map(bc =>
             bc.card === card ? { ...bc, focused: true } : { ...bc, focused: false }
         ));
@@ -332,7 +331,9 @@ export function PlayerInfo({ lifeCount, playerColor, deckCount, position, curren
     };
 
     return (
-        <div className={`${classes["player-info"]} ${isTopRow ? classes["top-row"] : classes["bottom-row"]}`}>
+        <>
+        {isActive && 
+        <div className={classes["player-side"]}>
             {commanderImageURI && isActive && (
                 <img 
                     src={commanderImageURI}
@@ -364,13 +365,16 @@ export function PlayerInfo({ lifeCount, playerColor, deckCount, position, curren
             <div className={classes["drawn-cards-container"]}>
                 {isActive && drawnCards.length > 0 && drawnCards.map((card, index) => (
                     <div key={index} className={classes["hand-card-wrapper"]}>
-                        <img 
-                            src={card.image_uris.small} 
-                            alt={card.name} 
-                            className={classes["drawn-card"]}
-                            onClick={() => handleCardClick(card)}
-                            style={{ cursor: 'pointer' }}
-                        />
+                        {roomCode && (
+                            <img 
+                                src={card.image_uris.small || 'default-image-url'} 
+                                alt={card.name} 
+                                className={classes["drawn-card"]}
+                                onClick={() => handleCardClick(card, roomCode)} 
+                                style={{ cursor: 'pointer' }}
+                            />
+                        )}
+
                         <button 
                             className={classes["hand-card-button"]}
                             onClick={() => handleDiscardCard(card)}
@@ -472,65 +476,41 @@ export function PlayerInfo({ lifeCount, playerColor, deckCount, position, curren
                         ))}
                 </div>
             </div>
-
-            {/* Combat Phase UI */}
-        {combatMode && (
-            <div className={classes["combat-phase"]}>
-                <h3>Select Attackers</h3>
-                        {boardCards
-                            .filter(bc => bc.card.type_line.toLowerCase().includes("creature"))
-                            .map((bc, index) => (
-                                <div key={index} className={classes["combat-card"]}>
-                                    <img
-                                        src={bc.card.image_uris.small}
-                                        alt={bc.card.name}
-                                        className={classes["combat-card-img"]}
-                                        onClick={() => handleAttackClick(bc)}
-                                        style={{ cursor: 'pointer', border: attackers.includes(bc) ? '2px solid green' : 'none' }}
-                                    />
-                                    <span>{calculateTotalPower(bc.card, counters[bc.card.name] || [])}</span>
-                                </div>
-                            ))}
-                        <div>
-                            <h4>Total Damage: {totalDamage}</h4>
-                            <button onClick={handleConfirmAttackers}>Confirm Selection</button>
-                            <button onClick={() => setCombatMode(false)}>Cancel</button>
-                            <button onClick={() => handleAttackPhase}>Attack!</button>
-                    </div>
-            </div>
-        )}
-            
-            {graveyardCards.length > 0 || exiledCards.length > 0 ? (
-                <div className={classes["side-areas"]}>
-                    {exiledCards.length > 0 && (
-                        <div className={classes["exile"]}>
-                            <h3>Exile</h3>
-                            {exiledCards.map((card, index) => (
-                                <img
-                                    key={index}
-                                    src={card.image_uris.small}
-                                    alt={card.name}
-                                    className={classes["exile-card"]}
-                                />
-                            ))}
-                        </div>
-                    )}
-                    {graveyardCards.length > 0 && (
-                        <div className={classes["graveyard"]}>
-                            <h3>Graveyard</h3>
-                            {graveyardCards.map((card, index) => (
-                                <img
-                                    key={index}
-                                    src={card.image_uris.small}
-                                    alt={card.name}
-                                    className={classes["graveyard-card"]}
-                                />
-                            ))}
-                        </div>
-                    )}
-                </div>
-            ) : null}
         </div>
+}
+
+        <div className={classes["opponent-side"]}>
+            
+
+            <div className={classes["op-non-land-cards"]}>
+                <div className={classes["life-display"]} style={{ backgroundColor: playerColor }}>
+                    <span>
+                        <button className={classes["change-life"]} onClick={handleOppLifeUp}>+</button>
+                        {opponentLives}
+                        <button className={classes["change-life"]} onClick={handleOppLifeDown}>-</button>
+                    </span>
+                </div>
+                {opponentBoardCards
+                    .map((bc, index) => (
+                        <div key={index} className={classes["card-wrapper"]}>
+                            <img
+                                src={bc.card.image_uris.small}
+                                alt={bc.card.name}
+                                className={`${classes["board-card"]} ${bc.tapped ? classes["tapped"] : ""} ${bc.focused ? classes["focused"] : ""}`}
+                            />
+                            {/* Power/Toughness if needed */}
+                            {bc.card.type_line.toLowerCase().includes("creature") && (
+                                <div className={classes["power-toughness-display"]}>
+                                    <span className={classes["power-toughness"]}>
+                                        {calculateTotalPower(bc.card, counters[bc.card.name] || [])}/{calculateTotalToughness(bc.card, counters[bc.card.name] || [])}
+                                    </span>
+                                </div>
+                            )}
+                        </div>
+                    ))}
+            </div>
+        </div>
+    </>
 )};
 
 

@@ -1,8 +1,30 @@
+.player-side {
+    bottom: 0px;
+}
+
+.player-side, .opponent-side {
+    width: 100%;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+}
+
+.opponent-side {
+    bottom: 0;
+    width: 100%;
+    z-index: 1;
+}
+
+.opponent-side .non-land-cards,
+.opponent-side .land-cards {
+    position: relative;
+}
+
 .life-display {
     border-radius: 50px;
-    width: 4vw;
+    width: 20%;
     height: 4vh;
-    font-size: 3vh;
+    z-index: 2;
     align-content: center;
     margin: 5px;
     padding: 2px;
@@ -11,35 +33,35 @@
 }
 
 .next-step {
-    position: fixed;
-    bottom: 50px;
-    left: 150px;
+    position: absolute;
+    top: 50px;
+    left: 15px;
 }
 
 .deck {
-    position: fixed;
+    position: absolute;
     background-color: rgb(35, 35, 35);
     height: 50px;
     width: 40px;
     border-radius: 2px;
     margin-left: 5px;
-    margin-bottom: 10px;
+    margin-bottom: 0px;
     font-size: 2vh;
     border: 1px solid rgba(255, 255, 255, 0.68);
     box-shadow: 2px 3px rgba(0, 0, 0, 0.398);
     color: white;
-    z-index: 1;
+    z-index: 2;
 }
 
 .drawn-cards-container {
     padding: 10px;
-    bottom: 80px;
-    position: fixed;
+    bottom: -450px;
+    position: absolute;
     display: flex;
     flex-direction: row;
     overflow-x: visible;
     gap: 5px;
-    z-index: 1;
+    z-index: 3;
     margin-left: 90px;
 }
 
@@ -52,7 +74,7 @@
     height: auto;
     width: 50px;
     margin: 5px;
-    display: block;
+    display: flex;
     transition: transform 0.2s ease;
 }
 
@@ -61,28 +83,25 @@
     width: 90px;
     margin: 5px;
     display: block;
-    position: fixed;
-    right: 80px;
-    bottom: 0;
+    position: absolute;
+    left: 1300px;
+    bottom: -450px;
     z-index: 2;
 }
 
 .board-container {
-    position: fixed;
-    bottom: 260px;
+    bottom: -250px;
     left: 150px;
     z-index: 1;
     display: flex;
     flex-wrap: wrap;
+    position: absolute;
     flex-direction: row;
     gap: 5px;
-}
-
-.board-container {
-    display: flex;
     justify-content: space-between;
 }
 
+.op-no.non-land-cards,
 .non-land-cards {
     display: flex;
     flex-wrap: wrap;
@@ -106,7 +125,7 @@
 }
 
 .life-display {
-    font-size: 80%;
+    font-size: 70%;
 }
 
 .change-life {
@@ -119,39 +138,25 @@
 
 .player-info {
     display: flex;
-    position: absolute;
+    position: relative;
 }
 
-.top-row {
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    top: 0;
-}
-  
-.bottom-row {
-    display: flex;
-    flex-direction: column;
+.opponent-side .life-display {
     position: absolute;
     bottom: 0;
 }
   
-.top-row .life-display {
-    top: 0;
+.player-side .life-display {
+    bottom: -50px;
     position: absolute;
 }
   
-.bottom-row .life-display {
-    bottom: 0;
-    position: absolute;
-}
-  
-.top-row .deck {
+.opponent-side .deck {
     top: 90px;
 }
   
-.bottom-row .deck {
-    bottom: 20%;
+.player-side .deck {
+    bottom: -300px;
 }
 
 .card-wrapper {
@@ -187,6 +192,7 @@
     padding: 5px;
     cursor: pointer;
     font-size: 12px;
+    z-index: 10;
   }
   
   .card-buttons button:hover {
@@ -195,8 +201,6 @@
   
 .graveyard-container {
     position: absolute;
-    left: 0s;
-    top: 0;
     width: 200px;
     height: 20vh;
     overflow-y: auto;
@@ -206,8 +210,6 @@
 
 .exile-container {
     position: absolute;
-    left: 0;
-    top: 200px; 
     width: 200px; 
     height: 200px; 
     overflow-y: auto;
@@ -244,6 +246,7 @@
 
 .hand-card-wrapper {
     display: flex;
+    position: relative;
     flex-direction: column;
     align-items: center;
     margin: 0 5px;

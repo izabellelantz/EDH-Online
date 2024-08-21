@@ -3,37 +3,24 @@ import { useAuth } from "./Auth/useAuth";
 import classes from "./MainPage.module.css";
 import { FormEvent, useEffect, useState } from "react";
 import axios from "axios";
-import { socket } from "./Socket/Socket";
 import { AddFriend, FriendRequests, FriendsList, PendingRequests } from "./Friends/Friends";
+import { ThemeProvider } from "./ThemeContext";
+import ThemeToggleButton from "./ThemeToggleButton";
 
 export interface CommanderImageResponse {
     commanderImageURI: string;
-}
-
-interface SocketResponse {
-    status: string;
-    msg: string;
 }
 
 export function MainPage() {
     const { user } = useAuth();
     let navigate = useNavigate();
     const [commanderImageURI, setCommanderImageURI] = useState<string | null>(null);
-
-    const [ room, setRoom ] = useState('Game');
-    
-    const ConnectRoom = () => {
-        socket.emit("joinRoom", room, (response: SocketResponse) => {
-          console.log(response.status);
-          alert(response.msg);
-        });
-      }
       
 
     useEffect(() => {
         const fetchCommanderImageURI = async () => {
             try {
-                const response = await axios.get<CommanderImageResponse>(`/commander/${user?.name}`);
+                const response = await axios.get<CommanderImageResponse>(`/commanderImg/${user?.name}`);
                 console.log('API Response:', response);
                 console.log(user?.name);
                 console.log(response.data.commanderImageURI);
@@ -51,59 +38,74 @@ export function MainPage() {
 
     const changeReq = async (e: FormEvent) => {
         e.preventDefault();
-        navigate("/DeckChange");
+        
+        navigate("/DeckChangingTutorial");
     }
 
     const startPlay = async (e: FormEvent) => {
         e.preventDefault();
-        ConnectRoom();
-        navigate("/Play");
-    }
+        
+        navigate("/SelectRoom");
+      }
+      
 
     const viewDeck = () => {
-        navigate("/Deck")
+        navigate("/Deck");
     }
 
-    return (        
+    const logOut = () => {
+        navigate("/");
+    }
+
+    const profilePage = () => {
+        navigate("/Profile");
+    }
+
+    return (
+        <ThemeProvider>
         <>
             <div>
-                {/* <h1>EdhOnline</h1> */}
-                <h2>Welcome, {user?.name}</h2>
-                
+                <ThemeToggleButton></ThemeToggleButton>
+
+                <button onClick={logOut} className={classes["xtraButtons"]}>Log Out</button>
+                <button onClick={profilePage} className={classes["xtraButtons"]}>Profile Settings</button>
+                <h2>Welcome, {user?.preferredName} ({user?.name})</h2>
                 <div className={classes["mainCont"]}>
-                    <div className={classes["commanderCont"]}>
-                        <p style={{fontSize:"18px"}}>Current Deck</p>
-                        {commanderImageURI && (
-                            <img 
-                                src={commanderImageURI} 
-                                alt="Commander" 
-                                style={{ maxWidth: '200px' }} 
-                            />
-                        )}
-                        <br />
-                        <button className={classes["deckButtons"]} onClick={changeReq}>Update/Change Deck</button>
-                        <button className={classes["deckButtons"]} onClick={viewDeck}>View Deck</button>
+                    <div className={classes["topSection"]}>
+                        <span className={classes["commanderCont"]}>
+                            <p style={{fontSize:"18px", fontWeight: "bold"}}>Current Deck</p>
+                            {commanderImageURI && (
+                                <img 
+                                    src={commanderImageURI} 
+                                    alt="Commander" 
+                                    style={{ maxWidth: '200px' }} 
+                                />
+                            )}
+                            <br />
+                            <button className={classes["deckButtons"]} onClick={changeReq}>Update/Change Deck</button>
+                            <button className={classes["deckButtons"]} onClick={viewDeck}>View Deck</button>
+                        </span>
+    
+                        <span className={classes["sectionCont"]}>
+                            <AddFriend/>
+                            <PendingRequests/>
+                            <FriendRequests/>
+                        </span>
                     </div>
-
-                    <div className={classes["sectionCont"]}>
-                        <AddFriend/>
-                        <PendingRequests/>
-                        <FriendRequests/>
-                    </div>
-
-                    <div className={classes["friendCont"]}>
+    
+                    <span className={classes["friendCont"]}>
                         <FriendsList/>
-                    </div>
+                    </span>
 
+                    <br></br>
+    
                     <div>
-                        <button className={classes["xtraButtons"]}>Add Friends</button>
-
                         <button className={classes["xtraButtons"]} onClick={startPlay}>Start Game</button>
-                
                         <button className={classes["xtraButtons"]}>How To</button>
                     </div>
                 </div>
             </div>
         </>
-    );
+        </ThemeProvider>
+    );    
 }

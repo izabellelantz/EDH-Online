@@ -43,6 +43,36 @@ button {
   transition: border-color 0.25s;
 }
 
+.chat-container {
+  border: 1px solid #ccc;
+  padding: 10px;
+  width: 300px;
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  font-size: 13px;
+  background-color: white;
+  border-radius: 10px;
+}
+
+.messages {
+  flex: 1;
+  overflow-y: auto;
+}
+
+input {
+  margin-top: 10px;
+}
+
+button {
+  margin-top: 5px;
+}
+
+
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;

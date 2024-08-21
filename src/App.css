@@ -16,3 +16,53 @@
   right: 0;
 }
 
+
+.theme-light {
+  background-color: rgb(229, 226, 213);
+}
+
+.theme-light h2 {
+  font-weight: normal;
+}
+
+.theme-dark {
+  /* Dark theme styles */
+  background-color: black;
+}
+
+.theme-dark h2 {
+  color: red;
+  font-weight: lighter;
+}
+
+.theme-dark div {
+  background-color: black;
+}
+
+.theme-dark span {
+  box-shadow: 2px 3px 4px 3px rgba(255, 255, 255, 0.235);
+  color: red;
+}
+
+.theme-dark p {
+  color: white;
+}
+
+.theme-toggle {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: rgb(246, 246, 246);
+  padding: 7px;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 5px 10px rgba(0, 0, 0, 0.339);
+}
+
+.xbuttons {
+  font-size: 12px;
+  padding: 5px;
+  border-radius: 10px;
+  box-shadow: 3px 2px 3px 2px rgba(0, 0, 0, 0.451);
+  margin: 8px;
+}
