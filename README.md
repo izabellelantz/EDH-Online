@@ -6,10 +6,10 @@
 
 This project is created as a way for fans of Magic the Gathering to play EDH manually with friends without the hassle of finding *hours* to play in person.
 
-## Current Status
+## Current Status - 09/2024
 **In Production**
 
-This project is currently being finalized! Once it is deployed the link will be uploaded here!
+This project is currently in the process of being finalized! Once it is deployed the link will be uploaded here!
 
 ## How It's Made
 **Tech Used:** HTML, CSS, Vite, React-TS, Express, JavaScript, Socket.IO
