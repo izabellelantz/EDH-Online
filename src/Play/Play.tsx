@@ -12,6 +12,7 @@ interface ChatMessage {
 
 export function ChatBox() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputMessage, setInputMessage] = useState<string>("");
   const [seeMessages, setSeeMessages] = useState(true);
@@ -40,15 +41,22 @@ export function ChatBox() {
     setInputMessage(e.target.value);
   };
 
+  
+  const howToPg = () => {
+    navigate("/HowTo")
+  }
+
   return (
     <>
-    <button onClick={() => setSeeMessages(prevState => !prevState)}>
+    <button style={{ position: "fixed", top: "0", left: "0", zIndex: "4" }} onClick={() => setSeeMessages(prevState => !prevState)}>
       Toggle Messages
     </button>
 
 
     { seeMessages && (
       <div className="chat-container">
+      <button className="xbuttons" style={{ position:"absolute", right:"0", top:"0", fontSize:"8px" }} onClick={() => howToPg()}>Game FAQ here</button>
+
       <div className="messages">
         {messages.map((msg, idx) => (
           <p key={idx}>

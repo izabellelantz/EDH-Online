@@ -2,7 +2,7 @@
     background-color: rgba(165, 163, 143, 0.4);
     padding: 5vw;
     border-radius: 8px;
-    text-align: left;
+    text-align: center;
 }
 
 .formArea {
@@ -68,5 +68,14 @@
     font-weight: bolder;
 
     margin-top: 50px;
-    margin-left: 100px;
+}
+
+.forgotPw {
+    text-align: center;
+    
+    font-size: 12px;
+  padding: 5px;
+  border-radius: 10px;
+  box-shadow: 3px 2px 3px 2px rgba(0, 0, 0, 0.451);
+  margin: 8px;
 }

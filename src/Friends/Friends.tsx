@@ -98,14 +98,14 @@ export function FriendRequests() {
     };
 
     return (
-        <>
+        <div style={{ textAlign: "center" }}>
             <p style={{fontSize:"18px", fontWeight: "bold"}}>Friend Requests</p>
             {friendRequests.length === 0 ? (
                 <p>No new friend requests</p>
             ) : (
-                <ul>
+                <ul style={{ padding: 0, margin: "0 auto", display: "inline-block", textAlign: "center" }}>
                     {friendRequests.map((requester, index) => (
-                        <li key={index}>
+                        <li key={index} style={{ listStyle:"none", margin: "10px 0"  }}>
                             <h3>{requester}</h3>
                             <button className={classes["friend-buttons"]} onClick={() => acceptFriendRequest(requester)}>Accept</button>
                             <button className={classes["friend-buttons"]} onClick={() => declineFriendRequest(requester)}>Decline</button>
@@ -113,7 +113,7 @@ export function FriendRequests() {
                     ))}
                 </ul>
             )}
-        </>
+        </div>
     );
 }
 
@@ -158,21 +158,22 @@ export function PendingRequests() {
     };
 
     return (
-        <>
-            <p style={{fontSize:"18px", fontWeight: "bold"}}>Pending Requests</p>
+        <div style={{ textAlign: "center" }}>
+        <p style={{ fontSize: "18px", fontWeight: "bold" }}>Pending Requests</p>
             {pendingRequests.length === 0 ? (
-                <p>No pending requests!</p>
-            ) : (
-                <ul>
-                    {pendingRequests.map((pendingRequest, index) => (
-                        <li key={index}>
-                            <p>{pendingRequest}</p>
-                            <button className={classes["friend-buttons"]} onClick={() => unsendRequest(pendingRequest)}>Unsend</button>
-                        </li>
-                    ))}
-                </ul>
-            )}
-        </>
+            <p>No pending requests!</p>
+        ) : (
+            <ul style={{ padding: 0, margin: "0 auto", display: "inline-block", textAlign: "center" }}>
+                {pendingRequests.map((pendingRequest, index) => (
+                    <li key={index} style={{ listStyle: "none", margin: "10px 0" }}>
+                        <p>{pendingRequest}</p>
+                        <button className={classes["friend-buttons"]} onClick={() => unsendRequest(pendingRequest)}>Unsend</button>
+                    </li>
+                ))}
+            </ul>
+        )}
+    </div>
+
     );
 }
 
@@ -347,7 +348,7 @@ export function FriendsList() {
             ) : (
                 <ul className={classes["friendsList"]}>
                     {friends.map((friend, index) => (
-                        <span style={{ boxShadow: "none"}} key={index}>
+                        <span style={{ boxShadow: "none", alignSelf:"center"}} key={index}>
                             <p className={classes["friendInfo"]}>{friend}</p>
                             <button className={classes["friend-buttons"]} onClick={() => UnaddFriend(friend)}>Unadd</button>
                             <button className={classes["friend-buttons"]} onClick={() => BlockFriend(friend)}>Block</button>

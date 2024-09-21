@@ -4,8 +4,6 @@ import classes from "./MainPage.module.css";
 import { FormEvent, useEffect, useState } from "react";
 import axios from "axios";
 import { AddFriend, FriendRequests, FriendsList, PendingRequests } from "./Friends/Friends";
-import { ThemeProvider } from "./ThemeContext";
-import ThemeToggleButton from "./ThemeToggleButton";
 
 export interface CommanderImageResponse {
     commanderImageURI: string;
@@ -61,15 +59,16 @@ export function MainPage() {
         navigate("/Profile");
     }
 
+    const tutorial = () => {
+        navigate("/HowTo");
+    }
+
     return (
-        <ThemeProvider>
         <>
             <div>
-                <ThemeToggleButton></ThemeToggleButton>
-
                 <button onClick={logOut} className={classes["xtraButtons"]}>Log Out</button>
                 <button onClick={profilePage} className={classes["xtraButtons"]}>Profile Settings</button>
-                <h2>Welcome, {user?.preferredName} ({user?.name})</h2>
+                <h2 style={{fontWeight:"lighter"}}>Welcome, {user?.preferredName}</h2>
                 <div className={classes["mainCont"]}>
                     <div className={classes["topSection"]}>
                         <span className={classes["commanderCont"]}>
@@ -101,11 +100,10 @@ export function MainPage() {
     
                     <div>
                         <button className={classes["xtraButtons"]} onClick={startPlay}>Start Game</button>
-                        <button className={classes["xtraButtons"]}>How To</button>
+                        <button className={classes["xtraButtons"]} onClick={tutorial}>How To</button>
                     </div>
                 </div>
             </div>
         </>
-        </ThemeProvider>
     );    
 }

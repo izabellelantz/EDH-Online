@@ -15,8 +15,13 @@
 
 .friendsList {
     list-style: none;
-    display: inline-flex;
+    display: flex; /* Changed from inline-flex */
+    align-items: flex-start;
     gap: 30px;
+    overflow-x: auto; /* Allows horizontal scrolling if content overflows */
+    padding: 0; /* Remove default padding */
+    margin: 0; /* Remove default margin */
+    width: 100%; /* Ensure full width usage */
 }
 
 .friendInfo {
@@ -25,6 +30,9 @@
     border-radius: 100px;
     box-shadow: 3px 2px 3px 2px rgba(0, 0, 0, 0.451);
     border: 2px solid rgba(0, 0, 0, 0.451);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .friend-buttons {
@@ -33,4 +41,8 @@
     border-radius: 10px;
     box-shadow: 3px 2px 3px 2px rgba(0, 0, 0, 0.451);
     margin: 8px;
+}
+
+.inviteActions, .gameReady {
+    margin-top: 10px;
 }

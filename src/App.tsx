@@ -16,6 +16,8 @@ import { AddDeck, DeckAddingTutorial } from "./Home/DeckUpload";
 import { DeckPage } from "./Deck/Deck";
 import { RoomSelection, WaitingRoom } from "./Play/JoinRoom";
 import { ProfilePage } from "./Home/Profile";
+import { About } from "./About/AboutPage";
+import { Tutorial } from "./Home/Tutorial";
 
 function App() {
   return (
@@ -29,9 +31,13 @@ function App() {
 
         <Route path="/DeckChangingTutorial" element={<DeckAddingTutorial/>}></Route>
 
+        <Route path="/About" element={<About/>}></Route>
+
         <Route path="/DeckChange" element={<AddDeck/>}></Route>
 
         <Route path="/Home" element={<MainPage/>}></Route>
+
+        <Route path="/HowTo" element={<Tutorial/>}></Route>
 
         <Route path="/Profile" element={<ProfilePage/>}></Route>
 

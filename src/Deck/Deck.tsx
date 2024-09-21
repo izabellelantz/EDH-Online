@@ -17,9 +17,9 @@ export interface DeckCard {
     type_line: string;
     power?: string;
     toughness?: string;
-    color_identity: string[];
-    keywords: string[];
-    rarity: string;
+    color_identity?: string[];
+    keywords?: string[];
+    rarity?: string;
 };
 
 export function shuffleDeck(deck: DeckCard[]): DeckCard[] {
@@ -116,7 +116,7 @@ export function DeckPage() {
                 <p>No deck data available</p>
             ) : (
                 Object.keys(groupedDeck).map((type, index) => (
-                    <div key={index} className={classes["type=section"]}>
+                    <div key={index} className={classes["type-section"]}>
                         <h2 style={{ textDecoration: "underline", fontSize: "18px" }}>{type}</h2>
                         <div className={classes["deck-grid"]}>
                             {groupedDeck[type].map((card, cardIndex) => (

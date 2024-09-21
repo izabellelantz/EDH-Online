@@ -42,26 +42,26 @@ export function Board({ players, roomCode }: BoardProps) {
     <div key={i} className={classes["cell"]}>
       <PlayerInfo
         lifeCount={40}
-        playerColor={assignedColors[i]}
+        playerColor={playmatColors[i]}
         deckCount={99}
         position={positions[i]}
         currentHandSize={0}
         roomCode={roomCode}
         isActive={player === user?.name}
       />
-  <div className={positions[i] === 'top' ? classes['top-playmat'] : classes['bottom-playmat']} style={{ backgroundColor: assignedColors[i] }}>
+  <div className={positions[i] === 'top' ? classes['top-playmat'] : classes['bottom-playmat']} style={{ backgroundColor: playmatColors[5] }}>
   </div>
     </div>
   ));
 
 
   return (
-    <div className={classes["game-board"]}>
+    <div className={classes["game-board"]} style={{ marginTop: "20px" }}>
       <div className={classes["grid"]} style={{ gridTemplateRows: `repeat(${numRows}, 1fr)`, gridTemplateColumns: `repeat(${numCols}, 1fr)` }}>
         <div className={classes["cell"]}>
         <PlayerInfo
         lifeCount={40}
-        playerColor={assignedColors[1]}
+        playerColor={playmatColors[5]}
         deckCount={99}
         position={"bottom"}
         currentHandSize={0}

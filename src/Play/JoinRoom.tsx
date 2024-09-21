@@ -9,6 +9,10 @@ export function WaitingRoom() {
   const [players, setPlayers] = useState<string[]>([]);
   const navigate = useNavigate();
 
+  function goHome() {
+    navigate("/Home");
+  }
+
   useEffect(() => {
     if (roomCode && user) {
       // Log to confirm that this hook is running
@@ -42,6 +46,7 @@ export function WaitingRoom() {
 
   return (
     <div className="waiting-room">
+      <button className="xbuttons" onClick={() => goHome()}>Home</button>
       <h1>Waiting Room</h1>
       <h2>Room Code: {roomCode}</h2>
       <div className="player-list">
@@ -78,9 +83,14 @@ export function RoomSelection() {
         alert("Room code and username are required!");
       }
     };
+
+    function goHome() {
+      navigate("/Home");
+    }
   
     return (
       <div className="room-selection">
+        <button className="xbuttons" onClick={() => goHome()}>Home</button>
         <h1>Join Room</h1>
         <input
           type="text"

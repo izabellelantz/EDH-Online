@@ -26,6 +26,8 @@ export function DeckAddingTutorial() {
 
     return (
         <>
+        <div className="bg-cont" style={{ boxShadow:"1px 2px 1px lightgray" }}>
+            <div className="bg-cont" style={{ border:"1px solid lightgray", boxShadow:"1px 2px 1px lightgray" }}>
             <p>EDH is a popular format of Magic the Gathering, also known as Commander format, upload your deck on the next page to begin playing.</p>
             
             <p>If you don't yet have a deck, a sample one is provided below. You may copy this deck to use for learning the game.</p>
@@ -33,8 +35,9 @@ export function DeckAddingTutorial() {
             <p>If you do have a deck, refer to the format below for how your deck should look on the next page.</p>
 
             <p>Remember: Commander goes in the last line!</p>
+            </div>
 
-            <textarea style={{ width: "400px", height: "400px", border: "none", borderRadius: "3px", margin: "5px" }}
+            <textarea style={{ width: "400px", height: "400px", padding: "10px", border: "1px solid lightgray", boxShadow:"1px 2px 1px lightgray", borderRadius: "3px", margin: "5px" }}
             contentEditable="false"
             spellCheck="false"
             value="1 Akroma's Will
@@ -138,6 +141,7 @@ export function DeckAddingTutorial() {
             </button>
 
             { howToDeck && (
+                <div className="bg-cont" style={{ boxShadow:"1px 2px 1px lightgray", border: "1px solid lightgray", marginTop: "10px"}}>
                 <div style={{ display: "inline-flex" }}>
                     <span style={{ margin: "10px", padding: "10px" }}>
                         <h2>1.</h2>
@@ -159,10 +163,12 @@ export function DeckAddingTutorial() {
                         <h2>4.</h2>
                         <p>Select Copy for MTGO (plain text export)</p>
 
-                        <button style={{ height:"30px", borderRadius:"12px"}} onClick={() => setHowToDeck(false)}>Got It!</button>
+                        <button className="xbuttons" onClick={() => setHowToDeck(false)}>Got It!</button>
                     </span>
                 </div>
+                </div>
             )}
+            </div>
         </>
     )
 }
@@ -172,6 +178,10 @@ export function AddDeck() {
     const navigate = useNavigate();
     const [deckInput, setDeckInput] = useState<string>("");
 
+    const backToTut = () => {
+        navigate("/DeckChangingTutorial");
+    }
+    
     const backToMain = () => {
         navigate("/Home");
     }
@@ -225,16 +235,17 @@ export function AddDeck() {
     }
 
     return (
-        <>
+        <div className="bg-cont" style={{ boxShadow:"1px 2px 1px lightgray" }}>
             <p>Make sure your deck is in the format of "quantity name", for example:</p>
             <p>"4 Forest</p>
             <p>3 Lightning Bolt</p>
             <p>1 Sol Ring" etc.</p>
             <p>Make sure your commander is in the last line!</p>
-            <textarea style={{ borderRadius: "10px" }} value={deckInput} onChange={(e) => setDeckInput(e.target.value)} rows={10} cols={50} />
+            <textarea style={{ borderRadius: "10px", boxShadow:"1px 2px 1px lightgray", border: "1px solid lightgray" }} value={deckInput} onChange={(e) => setDeckInput(e.target.value)} rows={10} cols={50} />
             <br />
             <button className="xbuttons" onClick={addToDeck}>Add Deck</button>
-            <button className="xbuttons" onClick={backToMain}>Back</button>
-        </>
+            <button className="xbuttons" onClick={backToTut}>Back</button>
+            <button className="xbuttons" onClick={backToMain}>Cancel</button>
+        </div>
     )
 }

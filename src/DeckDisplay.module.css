@@ -1,0 +1,26 @@
+.type-section {
+    margin-bottom: 32px;
+}
+
+.deck-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 16px;
+    padding: 16px;
+    background-color: rgba(167, 160, 128, 0.336);
+    border-radius: 20px;
+}
+
+.card-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 8px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-info {
+    font-size: 10px;
+}
